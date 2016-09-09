@@ -11,6 +11,7 @@ class OthelloGUI extends JFrame implements ActionListener{
     static final int COLS = 4;
     static final int AI   = -1;
     static final int HUMAN= 1;
+    static final int NONE = 0;
 
     private OthelloController controller;
     private OthelloButton[][] buttons = new OthelloButton[4][4];

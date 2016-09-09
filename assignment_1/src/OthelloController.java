@@ -7,6 +7,7 @@ import java.util.Random;
 public class OthelloController {
     private OthelloGUI gui;
     private int[][] grid = new int[OthelloGUI.ROWS][OthelloGUI.COLS];
+    private AI ai = new AI();
 
     public OthelloController(){
         this.gui = new OthelloGUI("test", this);
@@ -17,7 +18,7 @@ public class OthelloController {
 
     public void buttonPressed(OthelloCoordinate coord) {
         grid[coord.getRow()][coord.getCol()] = OthelloGUI.HUMAN;
-        OthelloCoordinate computerMove = calculateComputerMove();
+        OthelloCoordinate computerMove = ai.getNextMove(grid);
         grid[computerMove.getRow()][computerMove.getCol()] = OthelloGUI.AI;
         gui.setGrid(grid);
     }
