@@ -2,7 +2,13 @@
  * Created by Jonathan Böcker on 2016-09-12.
  */
 class Utilities {
-    static int[][] cloneArray(int[][] src) {
+
+    /**
+     * Clones a matrix
+     * @param src The matrix to be cloned
+     * @return The new matrix
+     */
+    static int[][] cloneMatrix(int[][] src) {
         int length = src.length;
         int[][] target = new int[length][src[0].length];
         for (int i = 0; i < length; i++) {
@@ -11,8 +17,16 @@ class Utilities {
         return target;
     }
 
+    /**
+     * Evaluates a move on an Othelloboard and changes bricks according to Othello rules
+     *
+     * @param start The board as it is when someone made a move
+     * @param move The move that was made
+     * @param player Human or AI move?
+     * @return The board after rules applied
+     */
     static int[][] calculateBoardChange(int[][] start, OthelloCoordinate move, int player) {
-        int[][] afterMove = cloneArray(start);
+        int[][] afterMove = cloneMatrix(start);
         if(start[move.getRow()][move.getCol()] != OthelloGUI.NONE) {
             System.out.print("Error: making move on a none empty space");
 

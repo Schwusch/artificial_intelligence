@@ -1,5 +1,7 @@
 /**
  * Created by Jonathan Böcker on 2016-09-12.
+ *
+ * Data structure remembering an initial Othello state, a move, and the resulting state
  */
 class StateChange {
     private StateNode startNode, endNode;
