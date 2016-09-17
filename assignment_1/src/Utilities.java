@@ -40,7 +40,9 @@ class Utilities {
             // Check in west direction
             currentCol--;
             while(currentCol >= 0) {
-                if(afterMove[currentRow][currentCol] == player) {
+                if(afterMove[currentRow][currentCol] == OthelloGUI.NONE) {
+                    break;
+                }else if(afterMove[currentRow][currentCol] == player) {
                     for(; currentCol < move.getCol(); currentCol++) {
                         afterMove[currentRow][currentCol] = player;
                     }
@@ -55,7 +57,9 @@ class Utilities {
             // Check in east direction
             currentCol++;
             while (currentCol < OthelloGUI.COLS) {
-                if(afterMove[currentRow][currentCol] == player) {
+                if(afterMove[currentRow][currentCol] == OthelloGUI.NONE) {
+                    break;
+                } else if(afterMove[currentRow][currentCol] == player) {
                     for(; currentCol > move.getCol(); currentCol--) {
                         afterMove[currentRow][currentCol] = player;
                     }
@@ -69,7 +73,9 @@ class Utilities {
             // Check in the north direction
             currentRow--;
             while (currentRow >= 0) {
-                if (afterMove[currentRow][currentCol] == player) {
+                if(afterMove[currentRow][currentCol] == OthelloGUI.NONE) {
+                    break;
+                } else if (afterMove[currentRow][currentCol] == player) {
                     for(;currentRow < move.getRow(); currentRow++) {
                         afterMove[currentRow][currentCol] = player;
                     }
@@ -82,7 +88,9 @@ class Utilities {
             // Check in south direction
             currentRow++;
             while(currentRow < OthelloGUI.ROWS) {
-                if (afterMove[currentRow][currentCol] == player) {
+                if(afterMove[currentRow][currentCol] == OthelloGUI.NONE) {
+                    break;
+                } else if (afterMove[currentRow][currentCol] == player) {
                     for (; currentRow > move.getRow(); currentRow--) {
                         afterMove[currentRow][currentCol] = player;
                     }
@@ -96,7 +104,9 @@ class Utilities {
             currentCol--;
             currentRow--;
             while ( currentCol >= 0 && currentRow >= 0) {
-                if (afterMove[currentRow][currentCol] == player) {
+                if(afterMove[currentRow][currentCol] == OthelloGUI.NONE) {
+                    break;
+                } else if (afterMove[currentRow][currentCol] == player) {
                     for(;currentRow < move.getRow() && currentCol < move.getCol(); currentRow++, currentCol++) {
                         afterMove[currentRow][currentCol] = player;
                     }
@@ -112,7 +122,9 @@ class Utilities {
             currentCol--;
             currentRow++;
             while ( currentCol >= 0 && currentRow < OthelloGUI.ROWS) {
-                if (afterMove[currentRow][currentCol] == player) {
+                if(afterMove[currentRow][currentCol] == OthelloGUI.NONE) {
+                    break;
+                }else if (afterMove[currentRow][currentCol] == player) {
                     for(; currentRow > move.getRow() && currentCol < move.getCol(); currentRow--, currentCol++) {
                         afterMove[currentRow][currentCol] = player;
                     }
@@ -128,7 +140,9 @@ class Utilities {
             currentCol++;
             currentRow++;
             while (currentCol < OthelloGUI.COLS && currentRow < OthelloGUI.ROWS) {
-                if (afterMove[currentRow][currentCol] == player) {
+                if(afterMove[currentRow][currentCol] == OthelloGUI.NONE) {
+                    break;
+                } else if (afterMove[currentRow][currentCol] == player) {
                     for(; currentRow > move.getRow() && currentCol > move.getCol(); currentRow--, currentCol--) {
                         afterMove[currentRow][currentCol] = player;
                     }
@@ -144,7 +158,9 @@ class Utilities {
             currentCol++;
             currentRow--;
             while (currentCol < OthelloGUI.COLS && currentRow >= 0) {
-                if (afterMove[currentRow][currentCol] == player) {
+                if(afterMove[currentRow][currentCol] == OthelloGUI.NONE) {
+                    break;
+                } else if (afterMove[currentRow][currentCol] == player) {
                     for (; currentRow < move.getRow() && currentCol > move.getCol(); currentRow++, currentCol--){
                         afterMove[currentRow][currentCol] = player;
                     }
