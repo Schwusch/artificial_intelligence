@@ -76,7 +76,9 @@ class StateNode {
         for(int row = 0; row < OthelloGUI.ROWS; row++) {
             for(int col = 0; col < OthelloGUI.COLS; col++) {
                 if(this.gridState[row][col] == OthelloGUI.NONE) {
-
+                    OthelloCoordinate move = new OthelloCoordinate(row, col);
+                    StateNode newState = new StateNode(Utilities.calculateBoardChange(gridState, move, player), player);
+                    this.possibleChanges.add(new StateChange(this, newState, move));
                 }
             }
         }
@@ -86,10 +88,10 @@ class StateNode {
         }
     }
 
-    private boolean createChange(int row, int col) {
+    private StateChange createChange(int row, int col) {
         OthelloCoordinate move = new OthelloCoordinate(row, col);
-        int[][] newGridState = Utilities.cloneArray(gridState);
-        newGridState[row][col] = this.player;
+        int[][] newGridState = Utilities.calculateBoardChange(gridState, move, player);
+        
         // Next State is created
         StateNode newState = new StateNode(
                 // Next grid will look different after the move
@@ -113,11 +115,11 @@ class StateNode {
             }
 
             // Check if we've found a branch worth pruning
-            return this.alpha > this.beta;
+            return new StateChange(this, newState, move);
         }
 
         // If not an endstate, check if it has resources to keep looking
-        return shouldKeepLooking();
+        return null;
     }
 
     private boolean shouldKeepLooking() {

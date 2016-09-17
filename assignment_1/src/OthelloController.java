@@ -24,8 +24,8 @@ class OthelloController {
 
     void buttonPressed(OthelloCoordinate coord) {
         this.grid = Utilities.calculateBoardChange(this.grid, coord, OthelloGUI.HUMAN);
-        //OthelloCoordinate computerMove = ai.getNextMove(grid);
-        //this.grid[computerMove.getRow()][computerMove.getCol()] = OthelloGUI.AI;
+        OthelloCoordinate computerMove = ai.getNextMove(grid);
+        this.grid[computerMove.getRow()][computerMove.getCol()] = OthelloGUI.AI;
         this.gui.setGrid(grid);
     }
 
