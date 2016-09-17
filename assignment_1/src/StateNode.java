@@ -2,6 +2,11 @@ import java.util.ArrayList;
 
 /**
  * Created by Jonathan Böcker on 2016-09-12.
+ *
+ * A somewhat complex data structure, similar to a tree and weighted graph with unlimited and unsorted child nodes.
+ * Keeps track of the edges(moves) and vertexes(statenodes) in an {@link ArrayList} of {@link StateChange} objects.
+ * On constructing the object, it recursively calculates the best state change(move). This may take a considerable
+ * amount of time and resources.
  */
 class StateNode {
     private int[][] gridState;
@@ -12,6 +17,7 @@ class StateNode {
     private ArrayList<StateChange> possibleChanges;
     private int player;
     private boolean isEndState = false;
+
 
     /**
      *
@@ -47,6 +53,14 @@ class StateNode {
         return this.isEndState;
     }
 
+    /**
+     * Returns the board in this states point count.
+     * Zero is a draw,
+     * negative values means the AI has more bricks,
+     * positive values means the human player has more bricks.
+     *
+     * @return The point count
+     */
     int pointCount(){
         int points = 0;
         for(int row = 0; row < OthelloGUI.ROWS; row++) {
@@ -66,7 +80,7 @@ class StateNode {
     }
 
     /*
-    Find all possible state changes, save pre and post state and the move that lead to state change
+    Find and save all possible state changes, save pre and post state and the move that lead to state change
      */
     private void findAllChanges(){
         this.possibleChanges = new ArrayList<>();
@@ -76,7 +90,7 @@ class StateNode {
         for(int row = 0; row < OthelloGUI.ROWS; row++) {
             for(int col = 0; col < OthelloGUI.COLS; col++) {
                 if(this.gridState[row][col] == OthelloGUI.NONE) {
-
+                    this.possibleChanges.add(createChange(row, col));
                 }
             }
         }
@@ -86,10 +100,13 @@ class StateNode {
         }
     }
 
-    private boolean createChange(int row, int col) {
+    /*
+    Creates a StateChange object and updates the alpha/beta variables if applicable
+     */
+    private StateChange createChange(int row, int col) {
         OthelloCoordinate move = new OthelloCoordinate(row, col);
-        int[][] newGridState = Utilities.cloneArray(gridState);
-        newGridState[row][col] = this.player;
+        int[][] newGridState = Utilities.calculateBoardChange(gridState, move, player);
+        
         // Next State is created
         StateNode newState = new StateNode(
                 // Next grid will look different after the move
@@ -113,13 +130,16 @@ class StateNode {
             }
 
             // Check if we've found a branch worth pruning
-            return this.alpha > this.beta;
+            return new StateChange(this, newState, move);
         }
 
         // If not an endstate, check if it has resources to keep looking
-        return shouldKeepLooking();
+        return null;
     }
 
+    /*
+    TODO: Implement a time and search depth limitation to the algorithm
+     */
     private boolean shouldKeepLooking() {
         return true;
     }

@@ -24,122 +24,55 @@ class Utilities {
             afterMove[currentRow][currentCol] = player;
 
             // Check in west direction
-            currentCol--;
-            while(currentCol >= 0) {
-                if(afterMove[currentRow][currentCol] == player) {
-                    for(; currentCol < move.getCol(); currentCol++) {
-                        afterMove[currentRow][currentCol] = player;
-                    }
-
-                    break;
-                }
-
-                currentCol--;
-            }
-            currentCol = move.getCol();
+            afterMove = Utilities.lookInDirection(0, -1, move, afterMove, player);
 
             // Check in east direction
-            currentCol++;
-            while (currentCol < OthelloGUI.COLS) {
-                if(afterMove[currentRow][currentCol] == player) {
-                    for(; currentCol > move.getCol(); currentCol--) {
-                        afterMove[currentRow][currentCol] = player;
-                    }
-
-                    break;
-                }
-                currentCol++;
-            }
-            currentCol = move.getCol();
+            afterMove = Utilities.lookInDirection(0, 1, move, afterMove, player);
 
             // Check in the north direction
-            currentRow--;
-            while (currentRow >= 0) {
-                if (afterMove[currentRow][currentCol] == player) {
-                    for(;currentRow < move.getRow(); currentRow++) {
-                        afterMove[currentRow][currentCol] = player;
-                    }
-                    break;
-                }
-                currentRow--;
-            }
-            currentRow = move.getRow();
+            afterMove = Utilities.lookInDirection(-1, 0, move, afterMove, player);
 
             // Check in south direction
-            currentRow++;
-            while(currentRow < OthelloGUI.ROWS) {
-                if (afterMove[currentRow][currentCol] == player) {
-                    for (; currentRow > move.getRow(); currentRow--) {
-                        afterMove[currentRow][currentCol] = player;
-                    }
-                    break;
-                }
-                currentRow++;
-            }
-            currentRow = move.getRow();
+            afterMove = Utilities.lookInDirection(1, 0, move, afterMove, player);
 
             // Check in north-west direction
-            currentCol--;
-            currentRow--;
-            while ( currentCol >= 0 && currentRow >= 0) {
-                if (afterMove[currentRow][currentCol] == player) {
-                    for(;currentRow < move.getRow() && currentCol < move.getCol(); currentRow++, currentCol++) {
-                        afterMove[currentRow][currentCol] = player;
-                    }
-                    break;
-                }
-                currentCol--;
-                currentRow--;
-            }
-            currentRow = move.getRow();
-            currentCol = move.getCol();
+            afterMove = Utilities.lookInDirection(-1, -1, move, afterMove, player);
 
             // Check in south-west direction
-            currentCol--;
-            currentRow++;
-            while ( currentCol >= 0 && currentRow < OthelloGUI.ROWS) {
-                if (afterMove[currentRow][currentCol] == player) {
-                    for(; currentRow > move.getRow() && currentCol < move.getCol(); currentRow--, currentCol++) {
-                        afterMove[currentRow][currentCol] = player;
-                    }
-                    break;
-                }
-                currentCol--;
-                currentRow++;
-            }
-            currentRow = move.getRow();
-            currentCol = move.getCol();
+            afterMove = Utilities.lookInDirection(1, -1, move, afterMove, player);
 
             // Check in south-east direction
-            currentCol++;
-            currentRow++;
-            while (currentCol < OthelloGUI.COLS && currentRow < OthelloGUI.ROWS) {
-                if (afterMove[currentRow][currentCol] == player) {
-                    for(; currentRow > move.getRow() && currentCol > move.getCol(); currentRow--, currentCol--) {
-                        afterMove[currentRow][currentCol] = player;
-                    }
-                    break;
-                }
-                currentCol++;
-                currentRow++;
-            }
-            currentRow = move.getRow();
-            currentCol = move.getCol();
+            afterMove = Utilities.lookInDirection(1, 1, move, afterMove, player);
 
             // Check in north-east direction
-            currentCol++;
-            currentRow--;
-            while (currentCol < OthelloGUI.COLS && currentRow >= 0) {
-                if (afterMove[currentRow][currentCol] == player) {
-                    for (; currentRow < move.getRow() && currentCol > move.getCol(); currentRow++, currentCol--){
-                        afterMove[currentRow][currentCol] = player;
-                    }
-                    break;
-                }
-                currentCol++;
-                currentRow--;
-            }
+            afterMove = Utilities.lookInDirection(-1, 1, move, afterMove, player);
         }
         return afterMove;
+    }
+
+    private static int[][] lookInDirection(int deltaRow, int deltaCol, OthelloCoordinate move, int[][] grid, int player) {
+        int currentRow = move.getRow();
+        int currentCol = move.getCol();
+
+        currentCol += deltaCol;
+        currentRow += deltaRow;
+        while (currentCol < OthelloGUI.COLS && currentCol >= 0 && currentRow < OthelloGUI.ROWS && currentRow >= 0) {
+            if(grid[currentRow][currentCol] == OthelloGUI.NONE) {
+                break;
+            } else if (grid[currentRow][currentCol] == player) {
+                while (currentCol != move.getCol() || currentRow != move.getRow()) {
+                    grid[currentRow][currentCol] = player;
+
+                    currentCol -= deltaCol;
+                    currentRow -= deltaRow;
+                }
+
+                break;
+            }
+            currentCol += deltaCol;
+            currentRow += deltaRow;
+        }
+
+        return grid;
     }
 }
