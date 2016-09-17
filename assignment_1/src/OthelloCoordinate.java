@@ -1,7 +1,7 @@
 /**
  * Created by Jonathan Böcker on 2016-09-09.
  */
-public class OthelloCoordinate {
+class OthelloCoordinate {
     private int row;
     private int col;
 
