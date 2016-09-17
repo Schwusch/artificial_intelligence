@@ -14,12 +14,18 @@ class OthelloController {
         this.gui.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.gui.pack();
         this.gui.setVisible(true);
+
+        grid[1][1] = OthelloGUI.HUMAN;
+        grid[2][2] = OthelloGUI.HUMAN;
+        grid[1][2] = OthelloGUI.AI;
+        grid[2][1] = OthelloGUI.AI;
+        this.gui.setGrid(grid);
     }
 
     void buttonPressed(OthelloCoordinate coord) {
-        this.grid[coord.getRow()][coord.getCol()] = OthelloGUI.HUMAN;
-        OthelloCoordinate computerMove = ai.getNextMove(grid);
-        this.grid[computerMove.getRow()][computerMove.getCol()] = OthelloGUI.AI;
+        this.grid = Utilities.calculateBoardChange(this.grid, coord, OthelloGUI.HUMAN);
+        //OthelloCoordinate computerMove = ai.getNextMove(grid);
+        //this.grid[computerMove.getRow()][computerMove.getCol()] = OthelloGUI.AI;
         this.gui.setGrid(grid);
     }
 
