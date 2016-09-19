@@ -25,7 +25,7 @@ class OthelloGUI extends JFrame implements ActionListener{
         setResizable(false);
         this.controller = controller;
 
-        JPanel panel = new JPanel(new GridLayout(4,4));
+        JPanel panel = new JPanel(new GridLayout(ROWS, COLS));
         panel.setMaximumSize(new Dimension(400,400));
 
         for(int row = 0; row < ROWS; row++) {

@@ -13,11 +13,10 @@ class StateNode {
     private int alpha = Integer.MIN_VALUE;
     private int beta = Integer.MAX_VALUE;
     private StateChange bestChange;
-    private StateChange worstChange;
     private ArrayList<StateChange> possibleChanges;
     private int player;
     private boolean isEndState = false;
-
+    private int depth;
 
     /**
      *
@@ -27,9 +26,9 @@ class StateNode {
     StateNode(int[][] gridState, int player){
         this.gridState = gridState;
         this.player = player;
+        this.depth = 0;
         findAllChanges();
     }
-
 
     /**
      * If this state will be a child node, this constructor is used
@@ -37,20 +36,17 @@ class StateNode {
      * @param gridState The state that the board is currently in
      * @param player The player about to make a move
      */
-    StateNode(int[][] gridState, int player, int alpha, int beta){
+    private StateNode(int[][] gridState, int player, int alpha, int beta, int depth){
         this.gridState = gridState;
         this.player = player;
         this.alpha = alpha;
         this.beta = beta;
+        this.depth = depth;
         findAllChanges();
     }
 
     OthelloCoordinate getBestMove() {
         return this.bestChange.getMove();
-    }
-
-    boolean isEndState(){
-        return this.isEndState;
     }
 
     /**
@@ -61,7 +57,7 @@ class StateNode {
      *
      * @return The point count
      */
-    int pointCount(){
+    private int pointCount(){
         int points = 0;
         for(int row = 0; row < OthelloGUI.ROWS; row++) {
             for (int col = 0; col < OthelloGUI.COLS; col++) {
@@ -71,12 +67,14 @@ class StateNode {
         return points;
     }
 
-    StateChange getBestChange() {
-        return this.bestChange;
-    }
-
-    StateChange getWorstChange() {
-        return this.worstChange;
+    int getValue() {
+        if(this.isEndState) {
+            return pointCount();
+        } else if(this.player == OthelloGUI.AI) {
+            return alpha;
+        } else {
+            return beta;
+        }
     }
 
     /*
@@ -85,18 +83,30 @@ class StateNode {
     private void findAllChanges(){
         this.possibleChanges = new ArrayList<>();
 
-        // Loop through matrix to find vacant move spots
-        outerloop:
-        for(int row = 0; row < OthelloGUI.ROWS; row++) {
-            for(int col = 0; col < OthelloGUI.COLS; col++) {
-                if(this.gridState[row][col] == OthelloGUI.NONE) {
-                    this.possibleChanges.add(createChange(row, col));
+        if(this.shouldKeepLooking()) {
+            // Loop through matrix to find vacant move spots
+            for (int row = 0; row < OthelloGUI.ROWS; row++) {
+                for (int col = 0; col < OthelloGUI.COLS; col++) {
+                    if (this.gridState[row][col] == OthelloGUI.NONE) {
+                        this.possibleChanges.add(createChange(row, col));
+                    }
                 }
             }
         }
 
         if (this.possibleChanges.size() == 0) {
             this.isEndState = true;
+        } else  {
+            for(StateChange change: possibleChanges) {
+                if(this.player == OthelloGUI.HUMAN && change.getEndNode().getValue() < beta) {
+                    beta = change.getEndNode().getValue();
+                    bestChange = change;
+
+                } else if (this.player == OthelloGUI.AI && change.getEndNode().getValue() > alpha) {
+                    alpha = change.getEndNode().getValue();
+                    bestChange = change;
+                }
+            }
         }
     }
 
@@ -105,7 +115,7 @@ class StateNode {
      */
     private StateChange createChange(int row, int col) {
         OthelloCoordinate move = new OthelloCoordinate(row, col);
-        int[][] newGridState = Utilities.calculateBoardChange(gridState, move, player);
+        int[][] newGridState = Utilities.calculateBoardChange(this.gridState, move, this.player);
         
         // Next State is created
         StateNode newState = new StateNode(
@@ -115,32 +125,17 @@ class StateNode {
                 -this.player,
                 // Pass on alpha and beta
                 this.alpha,
-                this.beta);
+                this.beta,
+                this.depth + 1);
 
-        this.possibleChanges.add(new StateChange(this, newState,move));
-
-        if (newState.isEndState()) {
-            int points = newState.pointCount();
-            if (points > this.alpha && this.player == OthelloGUI.AI) {
-                this.alpha = points;
-                // TODO Update alpha/beta and so on
-            } else if (points < this.beta && this.player == OthelloGUI.HUMAN) {
-                this.beta = points;
-                // TODO Update alpha/beta and so on
-            }
-
-            // Check if we've found a branch worth pruning
-            return new StateChange(this, newState, move);
-        }
-
-        // If not an endstate, check if it has resources to keep looking
-        return null;
+        return new StateChange(this, newState, move);
     }
 
     /*
     TODO: Implement a time and search depth limitation to the algorithm
      */
     private boolean shouldKeepLooking() {
-        return true;
+
+        return this.depth != StartOthello.SEARCH_DEPTH;
     }
 }
