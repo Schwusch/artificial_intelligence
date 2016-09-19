@@ -12,18 +12,34 @@ import java.awt.event.ActionListener;
 class OthelloGUI extends JFrame implements ActionListener{
     static final int ROWS = 4;
     static final int COLS = 4;
-    static final int AI   = -1;
-    static final int HUMAN= 1;
+    static final int AI   = 1;
+    static final int HUMAN= -1;
     static final int NONE = 0;
 
     private OthelloController controller;
     private OthelloButton[][] buttons = new OthelloButton[4][4];
 
+    private JLabel depthLabel = new JLabel();
+    private JLabel nodeCountLabel = new JLabel();
+    private JLabel infoLabel = new JLabel();
+
 
     OthelloGUI(String name, OthelloController controller) {
         super(name);
-        setResizable(false);
+        setResizable(true);
         this.controller = controller;
+        JPanel biggerPanel = new JPanel();
+        JPanel textsPanel = new JPanel(new GridLayout(3,0));
+        infoLabel.setText("Lets Play! You are black bricks.");
+        infoLabel.setPreferredSize(new Dimension(280, 50));
+        depthLabel.setText("Current depth limitation: " + StartOthello.SEARCH_DEPTH);
+        depthLabel.setPreferredSize(new Dimension(280, 50));
+        nodeCountLabel.setText("Nodes examined: 0");
+        nodeCountLabel.setPreferredSize(new Dimension(280, 50));
+        textsPanel.add(infoLabel);
+        textsPanel.add(depthLabel);
+        textsPanel.add(nodeCountLabel);
+        biggerPanel.add(textsPanel);
 
         JPanel panel = new JPanel(new GridLayout(ROWS, COLS));
         panel.setMaximumSize(new Dimension(400,400));
@@ -31,20 +47,30 @@ class OthelloGUI extends JFrame implements ActionListener{
         for(int row = 0; row < ROWS; row++) {
             for(int col = 0; col < COLS; col++){
                 buttons[row][col] = new OthelloButton(new OthelloCoordinate(row, col));
-                buttons[row][col].setPreferredSize(new Dimension(40,40));
+                buttons[row][col].setPreferredSize(new Dimension(70,70));
                 buttons[row][col].addActionListener(this);
                 panel.add(buttons[row][col]);
             }
         }
-        add(panel);
+        biggerPanel.add(panel);
+        add(biggerPanel);
     }
 
-    void setGrid(int[][] grid) {
+    void updateNodeCount(int count) {
+        nodeCountLabel.setText("Nodes examined: " + count);
+    }
+
+    void updateInfo(String text) {
+        infoLabel.setText(text);
+    }
+
+    void setGrid(int[][] grid, Boolean freeze) {
         for(int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS; col++) {
                 setButtonState(row, col, grid[row][col]);
             }
         }
+        if(freeze) freezeButtons();
     }
 
     private void setButtonState(int row, int col, int value) {
@@ -58,7 +84,16 @@ class OthelloGUI extends JFrame implements ActionListener{
                 buttons[row][col].setEnabled(false);
                 break;
             default:
+                buttons[row][col].setEnabled(true);
                 break;
+        }
+    }
+
+    private void freezeButtons(){
+        for(int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
+                buttons[row][col].setEnabled(false);
+            }
         }
     }
 
@@ -66,7 +101,16 @@ class OthelloGUI extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent actionEvent) {
         if(actionEvent.getSource() instanceof OthelloButton) {
             OthelloButton button = (OthelloButton) actionEvent.getSource();
-            controller.buttonPressed(button.getCoord());
+            freezeButtons();
+            SwingWorker worker = new SwingWorker() {
+                @Override
+                protected Object doInBackground() throws Exception {
+                    controller.buttonPressed(button.getCoord());
+                    return null;
+                }
+            };
+            worker.execute();
+
         }
     }
 }

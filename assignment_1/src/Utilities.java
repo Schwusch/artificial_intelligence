@@ -11,6 +11,24 @@ class Utilities {
         return target;
     }
 
+    static Boolean isGameFinished(int[][] board) {
+        for (int i = 0; i < board.length; i++)
+            for (int j = 0; j < board[i].length; j++)
+                if(board[i][j] == OthelloGUI.NONE)
+                    return false;
+
+        return true;
+    }
+
+    static int boardScore(int[][] board) {
+        int count = 0;
+        for (int i = 0; i < board.length; i++)
+            for (int j = 0; j < board[i].length; j++)
+                count += board[i][j];
+
+        return count;
+    }
+
     static int[][] calculateBoardChange(int[][] start, OthelloCoordinate move, int player) {
         int[][] afterMove = cloneArray(start);
         if(start[move.getRow()][move.getCol()] != OthelloGUI.NONE) {

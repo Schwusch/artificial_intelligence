@@ -9,8 +9,8 @@ class AI {
      * @param grid The board state after a human move has been made
      * @return A calculated move
      */
-    OthelloCoordinate getNextMove(int[][] grid) {
-        this.rootNode = new StateNode(grid, OthelloGUI.AI);
+    OthelloCoordinate getNextMove(int[][] grid, OthelloController controller) {
+        this.rootNode = new StateNode(grid, OthelloGUI.AI, controller);
         return rootNode.getBestMove();
     }
 }
