@@ -5,6 +5,9 @@ import java.awt.event.ActionListener;
 
 /**
  * Created by Jonathan Böcker on 2016-09-09.
+ *
+ * A simple Othello GUI with buttons representing every grid position.
+ * The buttons are clickable!(Almost guaranteed*)
  */
 class OthelloGUI extends JFrame implements ActionListener{
     static final int ROWS = 4;
