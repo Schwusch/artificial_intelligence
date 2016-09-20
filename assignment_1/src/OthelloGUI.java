@@ -135,10 +135,31 @@ class OthelloGUI extends JFrame implements ActionListener{
 
         }
     }
+
     private class TimerUpdater implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             timerLabel.setText("Time calculated:" + Float.toString(round((System.currentTimeMillis() - timeStarted) / 1000.0f, 2)) + "s");
+        }
+    }
+
+    /**
+     * Created by Jonathan Böcker on 2016-09-09.
+     *
+     * A class extending JButton to remember its position on an Othello board
+     * It has a satisfactory green color, pleasing the human eye, caressing the soul.
+     */
+    private class OthelloButton extends JButton {
+        private OthelloCoordinate coord;
+
+        OthelloButton(OthelloCoordinate coord){
+            super();
+            this.coord = coord;
+            setBackground(new Color(0,99,33));
+        }
+
+        OthelloCoordinate getCoord() {
+            return coord;
         }
     }
 }

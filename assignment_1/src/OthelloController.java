@@ -7,7 +7,6 @@ import java.util.Random;
 class OthelloController {
     private OthelloGUI gui;
     private int[][] grid = new int[OthelloGUI.ROWS][OthelloGUI.COLS];
-    private AI ai = new AI();
     private int nodesExamined = 0;
 
     /**
@@ -47,10 +46,10 @@ class OthelloController {
         this.grid = Utilities.calculateBoardChange(this.grid, coord, OthelloGUI.HUMAN);
         SwingUtilities.invokeLater(() -> gui.setGrid(grid, true));
 
-
         // AI finds the best possible counter move
-        OthelloCoordinate computerMove = ai.getNextMove(grid, this);
+        OthelloCoordinate computerMove = new StateNode(grid, OthelloGUI.AI, this).getBestMove();
         this.grid = Utilities.calculateBoardChange(this.grid, computerMove, OthelloGUI.AI);
+
         // Update gui
         SwingUtilities.invokeLater(() -> gui.setGrid(grid, false));
         SwingUtilities.invokeLater(() -> gui.stopTimer());
