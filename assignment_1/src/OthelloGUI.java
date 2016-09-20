@@ -51,6 +51,7 @@ class OthelloGUI extends JFrame implements ActionListener{
         biggerPanel.add(textsPanel);
 
         JPanel panel = new JPanel(new GridLayout(ROWS, COLS));
+        panel.setBackground(new Color(0x0066cc));
         panel.setMaximumSize(new Dimension(400,400));
 
         for(int row = 0; row < ROWS; row++) {
