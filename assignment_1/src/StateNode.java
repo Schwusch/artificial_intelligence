@@ -110,19 +110,22 @@ class StateNode {
     Update alpha/beta values and evaluate if it's necessary to keep looking in this branch
      */
     private boolean prune(StateChange change){
-        if(this.player == OthelloGUI.HUMAN && change.getEndNode().getValue() < beta) {
-            beta = change.getEndNode().getValue();
+        int value = change.getEndNode().getValue();
+        if(this.player == OthelloGUI.HUMAN && value < beta) {
+            beta = value;
             bestChange = change;
 
-        } else if (this.player == OthelloGUI.AI && change.getEndNode().getValue() > alpha) {
-            alpha = change.getEndNode().getValue();
+        } else if (this.player == OthelloGUI.AI && value > alpha) {
+            alpha = value;
             bestChange = change;
         }
         return this.player == OthelloGUI.HUMAN && alpha >= beta;
     }
 
     /*
-    Creates a StateChange object and updates the alpha/beta variables if applicable
+    Makes a "virtual" move and creates a state change
+    This is the recursive part which doesn't return until we've hit a base case,
+    which is when a limit has been reached or all non pruned leafnodes has been found
      */
     private StateChange createChange(int row, int col, OthelloController controller) {
         OthelloCoordinate move = new OthelloCoordinate(row, col);
@@ -145,7 +148,7 @@ class StateNode {
     }
 
     /*
-    TODO: Implement a time and search depth limitation to the algorithm
+    TODO: Implement a time limitation to the algorithm
      */
     private boolean shouldKeepLooking() {
 

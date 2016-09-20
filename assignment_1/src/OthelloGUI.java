@@ -127,13 +127,6 @@ class OthelloGUI extends JFrame implements ActionListener{
         }
     }
 
-    /*
-    Helper method to make floats look better
-     */
-    private static float round(float d, int decimalPlace) {
-        return BigDecimal.valueOf(d).setScale(decimalPlace,BigDecimal.ROUND_HALF_UP).floatValue();
-    }
-
     /**
      * React to user input(clicks on buttons)
      * Tells the controller which button has been pressed
@@ -166,7 +159,15 @@ class OthelloGUI extends JFrame implements ActionListener{
     private class TimerUpdater implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            timerLabel.setText("Time calculated:" + Float.toString(round((System.currentTimeMillis() - timeStarted) / 1000.0f, 2)) + "s");
+            timerLabel.setText(
+                    "Time calculated:" +
+                    Float.toString(
+                            Utilities.round(
+                                    (System.currentTimeMillis() - timeStarted) / 1000.0f, 2
+                            )
+                    ) +
+                    "s"
+            );
         }
     }
 
