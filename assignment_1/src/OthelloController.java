@@ -36,7 +36,8 @@ class OthelloController {
 
     void nodeFound() {
         this.nodesExamined++;
-        SwingUtilities.invokeLater(() -> gui.updateNodeCount(nodesExamined));
+        if(this.nodesExamined % 1000 == 0)
+            SwingUtilities.invokeLater(() -> gui.updateNodeCount(nodesExamined));
     }
 
     /**
@@ -53,7 +54,10 @@ class OthelloController {
         // AI finds the best possible counter move
         OthelloCoordinate computerMove = ai.getNextMove(grid, this);
         this.grid = Utilities.calculateBoardChange(this.grid, computerMove, OthelloGUI.AI);
+        // Update gui
         SwingUtilities.invokeLater(() -> gui.setGrid(grid, false));
+        SwingUtilities.invokeLater(() -> gui.stopTimer());
+        SwingUtilities.invokeLater(() -> gui.updateNodeCount(nodesExamined));
 
         if(Utilities.isGameFinished(this.grid)) {
             int score = Utilities.boardScore(this.grid);

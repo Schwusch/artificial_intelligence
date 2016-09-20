@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 
 /**
  * Created by Jonathan Böcker on 2016-09-09.
@@ -22,6 +23,11 @@ class OthelloGUI extends JFrame implements ActionListener{
     private JLabel depthLabel = new JLabel();
     private JLabel nodeCountLabel = new JLabel();
     private JLabel infoLabel = new JLabel();
+    private JLabel timerLabel = new JLabel();
+
+    private long timeStarted;
+    private Timer timer;
+    private TimerUpdater updater = new TimerUpdater();
 
 
     OthelloGUI(String name, OthelloController controller) {
@@ -29,16 +35,19 @@ class OthelloGUI extends JFrame implements ActionListener{
         setResizable(true);
         this.controller = controller;
         JPanel biggerPanel = new JPanel();
-        JPanel textsPanel = new JPanel(new GridLayout(3,0));
+        JPanel textsPanel = new JPanel(new GridLayout(4,0));
         infoLabel.setText("Lets Play! You are black bricks.");
         infoLabel.setPreferredSize(new Dimension(280, 50));
         depthLabel.setText("Current depth limitation: " + StartOthello.SEARCH_DEPTH);
         depthLabel.setPreferredSize(new Dimension(280, 50));
         nodeCountLabel.setText("Nodes examined: 0");
         nodeCountLabel.setPreferredSize(new Dimension(280, 50));
+        timerLabel.setText("Time calculated:");
+        timerLabel.setPreferredSize(new Dimension(280, 50));
         textsPanel.add(infoLabel);
         textsPanel.add(depthLabel);
         textsPanel.add(nodeCountLabel);
+        textsPanel.add(timerLabel);
         biggerPanel.add(textsPanel);
 
         JPanel panel = new JPanel(new GridLayout(ROWS, COLS));
@@ -62,6 +71,10 @@ class OthelloGUI extends JFrame implements ActionListener{
 
     void updateInfo(String text) {
         infoLabel.setText(text);
+    }
+
+    void stopTimer(){
+        this.timer.removeActionListener(this.updater);
     }
 
     void setGrid(int[][] grid, Boolean freeze) {
@@ -97,11 +110,19 @@ class OthelloGUI extends JFrame implements ActionListener{
         }
     }
 
+    private static float round(float d, int decimalPlace) {
+        return BigDecimal.valueOf(d).setScale(decimalPlace,BigDecimal.ROUND_HALF_UP).floatValue();
+    }
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if(actionEvent.getSource() instanceof OthelloButton) {
             OthelloButton button = (OthelloButton) actionEvent.getSource();
             freezeButtons();
+            timerLabel.setText("Time calculated: 0s");
+            timeStarted = System.currentTimeMillis();
+            timer = new Timer(500, this.updater);
+            timer.start();
             SwingWorker worker = new SwingWorker() {
                 @Override
                 protected Object doInBackground() throws Exception {
@@ -111,6 +132,12 @@ class OthelloGUI extends JFrame implements ActionListener{
             };
             worker.execute();
 
+        }
+    }
+    private class TimerUpdater implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            timerLabel.setText("Time calculated:" + Float.toString(round((System.currentTimeMillis() - timeStarted) / 1000.0f, 2)) + "s");
         }
     }
 }

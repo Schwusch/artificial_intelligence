@@ -10,7 +10,6 @@ class AI {
      * @return A calculated move
      */
     OthelloCoordinate getNextMove(int[][] grid, OthelloController controller) {
-        this.rootNode = new StateNode(grid, OthelloGUI.AI, controller);
-        return rootNode.getBestMove();
+        return new StateNode(grid, OthelloGUI.AI, controller).getBestMove();
     }
 }
