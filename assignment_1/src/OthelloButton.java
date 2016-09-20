@@ -14,7 +14,7 @@ class OthelloButton extends JButton {
     OthelloButton(OthelloCoordinate coord){
         super();
         this.coord = coord;
-        setBackground(new Color(00,99,33));
+        setBackground(new Color(0,99,33));
     }
 
     OthelloCoordinate getCoord() {

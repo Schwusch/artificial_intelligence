@@ -125,7 +125,7 @@ class StateNode {
                 this.depth + 1,
                 controller);
 
-        return new StateChange(this, newState, move);
+        return new StateChange(newState, move);
     }
 
     /*

@@ -2,7 +2,7 @@
  * Created by Jonathan Böcker on 2016-09-12.
  */
 class Utilities {
-    static int[][] cloneArray(int[][] src) {
+    private static int[][] cloneArray(int[][] src) {
         int length = src.length;
         int[][] target = new int[length][src[0].length];
         for (int i = 0; i < length; i++) {
@@ -12,9 +12,9 @@ class Utilities {
     }
 
     static Boolean isGameFinished(int[][] board) {
-        for (int i = 0; i < board.length; i++)
-            for (int j = 0; j < board[i].length; j++)
-                if(board[i][j] == OthelloGUI.NONE)
+        for (int[] aBoard : board)
+            for (int anABoard : aBoard)
+                if (anABoard == OthelloGUI.NONE)
                     return false;
 
         return true;
@@ -22,9 +22,8 @@ class Utilities {
 
     static int boardScore(int[][] board) {
         int count = 0;
-        for (int i = 0; i < board.length; i++)
-            for (int j = 0; j < board[i].length; j++)
-                count += board[i][j];
+        for (int[] aBoard : board)
+            for (int anABoard : aBoard) count += anABoard;
 
         return count;
     }

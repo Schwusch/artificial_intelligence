@@ -20,16 +20,13 @@ class OthelloController {
         grid[1][2] = OthelloGUI.AI;
         grid[2][1] = OthelloGUI.AI;
         // Make an interface
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                gui = new OthelloGUI("test", OthelloController.this);
-                gui.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                gui.pack();
-                gui.setVisible(true);
-                // Update the GUI
-                gui.setGrid(grid, false);
-            }
+        SwingUtilities.invokeLater(() -> {
+            gui = new OthelloGUI("test", OthelloController.this);
+            gui.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            gui.pack();
+            gui.setVisible(true);
+            // Update the GUI
+            gui.setGrid(grid, false);
         });
 
     }

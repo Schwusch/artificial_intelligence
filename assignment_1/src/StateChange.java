@@ -4,17 +4,12 @@
  * Data structure remembering an initial Othello state, a move, and the resulting state
  */
 class StateChange {
-    private StateNode startNode, endNode;
+    private StateNode endNode;
     private OthelloCoordinate move;
 
-    StateChange(StateNode startNode, StateNode endNode, OthelloCoordinate move) {
-        this.startNode = startNode;
+    StateChange(StateNode endNode, OthelloCoordinate move) {
         this.endNode = endNode;
         this.move = move;
-    }
-
-    StateNode getStartNode(){
-        return startNode;
     }
 
     StateNode getEndNode(){
