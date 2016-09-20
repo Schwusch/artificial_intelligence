@@ -18,9 +18,11 @@ class StateNode {
     private int depth;
 
     /**
+     * Creates a root node that represents the board currently as it is.
      *
      * @param gridState The state that the board is currently in
      * @param player The player about to make a move
+     * @param controller The guy we call when something exciting happens
      */
     StateNode(int[][] gridState, int player, OthelloController controller){
         this.gridState = gridState;
@@ -31,10 +33,14 @@ class StateNode {
     }
 
     /**
-     * If this state will be a child node, this constructor is used
+     * This is the recursive constructor used internally
      *
      * @param gridState The state that the board is currently in
      * @param player The player about to make a move
+     * @param alpha The alpha value that should be used
+     * @param beta The beta value that should be used
+     * @param depth How many moves we should predict and evaluate
+     * @param controller The guy we call when something exciting happens
      */
     private StateNode(int[][] gridState, int player, int alpha, int beta, int depth, OthelloController controller){
         this.gridState = gridState;
@@ -46,6 +52,11 @@ class StateNode {
         findAllChanges(controller);
     }
 
+    /**
+     * Get the best calculated move
+     *
+     * @return The move that will change the world
+     */
     OthelloCoordinate getBestMove() {
         return this.bestChange.getMove();
     }
@@ -53,6 +64,7 @@ class StateNode {
     /**
      * Returns Alpha value if player is AI at this stage, Beta value if Human.
      * If end-node, board score will be returned.
+     *
      * @return the value
      */
     int getValue() {
@@ -94,6 +106,9 @@ class StateNode {
         }
     }
 
+    /*
+    Update alpha/beta values and evaluate if it's necessary to keep looking in this branch
+     */
     private boolean prune(StateChange change){
         if(this.player == OthelloGUI.HUMAN && change.getEndNode().getValue() < beta) {
             beta = change.getEndNode().getValue();
@@ -122,6 +137,7 @@ class StateNode {
                 // Pass on alpha and beta
                 this.alpha,
                 this.beta,
+                // Increase depth searched
                 this.depth + 1,
                 controller);
 

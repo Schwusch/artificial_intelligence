@@ -18,7 +18,7 @@ class OthelloGUI extends JFrame implements ActionListener{
     static final int NONE = 0;
 
     private OthelloController controller;
-    private OthelloButton[][] buttons = new OthelloButton[4][4];
+    private OthelloButton[][] buttons = new OthelloButton[ROWS][COLS];
 
     private JLabel depthLabel = new JLabel();
     private JLabel nodeCountLabel = new JLabel();
@@ -29,7 +29,12 @@ class OthelloGUI extends JFrame implements ActionListener{
     private Timer timer;
     private TimerUpdater updater = new TimerUpdater();
 
-
+    /**
+     * Makes the GUI look good
+     *
+     * @param name Title of the window
+     * @param controller A reference to someone whe can call if the user does something
+     */
     OthelloGUI(String name, OthelloController controller) {
         super(name);
         setResizable(true);
@@ -65,19 +70,24 @@ class OthelloGUI extends JFrame implements ActionListener{
         biggerPanel.add(panel);
         add(biggerPanel);
     }
-
+    // This is an occasion where i believe the code speaks for itself
     void updateNodeCount(int count) {
         nodeCountLabel.setText("Nodes examined: " + count);
     }
-
+    // Dito
     void updateInfo(String text) {
         infoLabel.setText(text);
     }
-
+    // Dito
     void stopTimer(){
         this.timer.removeActionListener(this.updater);
     }
 
+    /**
+     * Updates the graphical board
+     * @param grid The board data
+     * @param freeze If the buttons should be disabled or not
+     */
     void setGrid(int[][] grid, Boolean freeze) {
         for(int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS; col++) {
@@ -87,6 +97,9 @@ class OthelloGUI extends JFrame implements ActionListener{
         if(freeze) freezeButtons();
     }
 
+    /*
+    Enables/Disables button depending if there is a brick on it or not
+     */
     private void setButtonState(int row, int col, int value) {
         switch (value){
             case AI:
@@ -103,6 +116,9 @@ class OthelloGUI extends JFrame implements ActionListener{
         }
     }
 
+    /*
+    Disables all buttons
+     */
     private void freezeButtons(){
         for(int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS; col++) {
@@ -111,10 +127,18 @@ class OthelloGUI extends JFrame implements ActionListener{
         }
     }
 
+    /*
+    Helper method to make floats look better
+     */
     private static float round(float d, int decimalPlace) {
         return BigDecimal.valueOf(d).setScale(decimalPlace,BigDecimal.ROUND_HALF_UP).floatValue();
     }
 
+    /**
+     * React to user input(clicks on buttons)
+     * Tells the controller which button has been pressed
+     * @param actionEvent
+     */
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if(actionEvent.getSource() instanceof OthelloButton) {
@@ -124,6 +148,7 @@ class OthelloGUI extends JFrame implements ActionListener{
             timeStarted = System.currentTimeMillis();
             timer = new Timer(500, this.updater);
             timer.start();
+            // Start a background thread to *not* freeze the GUI
             SwingWorker worker = new SwingWorker() {
                 @Override
                 protected Object doInBackground() throws Exception {
@@ -135,7 +160,9 @@ class OthelloGUI extends JFrame implements ActionListener{
 
         }
     }
-
+    /*
+    Updates a label with time passed
+     */
     private class TimerUpdater implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
