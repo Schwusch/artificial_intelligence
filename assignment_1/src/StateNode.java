@@ -80,12 +80,12 @@ class StateNode {
         }
     }
 
-    public boolean hasMove() {
+    boolean hasMove() {
         return bestChange != null;
     }
 
     /*
-    Find and save all possible state changes, save pre and post state and the move that lead to state change
+    Find and save all possible state changes, save post state and the move that lead to state change
      */
     private void findAllChanges(OthelloController controller){
         ArrayList<StateChange> possibleChanges = new ArrayList<>();
@@ -142,7 +142,7 @@ class StateNode {
     /*
     Makes a "virtual" move and creates a state change
     This is the recursive part which doesn't return until we've hit a base case,
-    which is when a limit has been reached or all non pruned leafnodes has been found
+    which is when a time limit has been reached or all non pruned leafnodes has been found
      */
     private StateChange createChange(int row, int col, OthelloController controller, long childNodeDeadline) {
         OthelloCoordinate move = new OthelloCoordinate(row, col);
@@ -168,6 +168,7 @@ class StateNode {
 
     /*
     TODO: Implement a time limitation to the algorithm
+    UPDATE: It's done, I think. Tell your boss.
      */
     private boolean shouldKeepLooking() {
 

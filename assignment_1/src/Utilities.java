@@ -6,6 +6,11 @@ import java.math.BigDecimal;
  * This is where i stash methods that doesn't need instantiated object
  */
 class Utilities {
+    private static final int NORTH = -1;
+    private static final int SOUTH = 1;
+    private static final int WEST = -1;
+    private static final int EAST = 1;
+    private static final int NO_DIRECTION = 0;
 
     /**
      * Checks if there is any vacant spots on the board
@@ -61,28 +66,21 @@ class Utilities {
             afterMove[currentRow][currentCol] = player;
 
             // Check in west direction
-            afterMove = Utilities.lookInDirection(0, -1, move, afterMove, player);
-
+            afterMove = Utilities.lookInDirection(NO_DIRECTION, WEST, move, afterMove, player);
             // Check in east direction
-            afterMove = Utilities.lookInDirection(0, 1, move, afterMove, player);
-
+            afterMove = Utilities.lookInDirection(NO_DIRECTION, EAST, move, afterMove, player);
             // Check in the north direction
-            afterMove = Utilities.lookInDirection(-1, 0, move, afterMove, player);
-
+            afterMove = Utilities.lookInDirection(NORTH, NO_DIRECTION, move, afterMove, player);
             // Check in south direction
-            afterMove = Utilities.lookInDirection(1, 0, move, afterMove, player);
-
+            afterMove = Utilities.lookInDirection(SOUTH, NO_DIRECTION, move, afterMove, player);
             // Check in north-west direction
-            afterMove = Utilities.lookInDirection(-1, -1, move, afterMove, player);
-
+            afterMove = Utilities.lookInDirection(NORTH, WEST, move, afterMove, player);
             // Check in south-west direction
-            afterMove = Utilities.lookInDirection(1, -1, move, afterMove, player);
-
+            afterMove = Utilities.lookInDirection(SOUTH, WEST, move, afterMove, player);
             // Check in south-east direction
-            afterMove = Utilities.lookInDirection(1, 1, move, afterMove, player);
-
+            afterMove = Utilities.lookInDirection(SOUTH, EAST, move, afterMove, player);
             // Check in north-east direction
-            afterMove = Utilities.lookInDirection(-1, 1, move, afterMove, player);
+            afterMove = Utilities.lookInDirection(NORTH, EAST, move, afterMove, player);
         }
         return afterMove;
     }
@@ -103,6 +101,11 @@ class Utilities {
         return validMoves;
     }
 
+    /**
+     * Counts number of boolean true values in a boolean matrix
+     * @param grid
+     * @return number of trues
+     */
     static int numberOfValidMoves(boolean[][] grid) {
         int count = 0;
         for (int i = 0; i < grid.length; i++)
@@ -111,6 +114,13 @@ class Utilities {
 
         return count;
     }
+
+    /**
+     * Checks if a grid/board has any possible moves for a given player
+     * @param grid
+     * @param player OthelloGUI.HUMAN or OthelloGUI.AI
+     * @return basically yes or no
+     */
     static boolean hasPossibleMoves(int[][] grid, int player){
         boolean[][] validMoves = findValidMoves(grid, player);
         for (int i = 0; i < grid.length; i++)
@@ -120,18 +130,25 @@ class Utilities {
         return false;
     }
 
+    /*
+    Checks if a coordinate is ok to play for a given player on a given board/grid
+     */
     private static boolean isValidMove(int[][] grid, int row, int col, int player){
-
-        return Utilities.possibleDirection(0, -1, row, col, grid, player) ||
-                Utilities.possibleDirection(0, 1, row, col, grid, player) ||
-                Utilities.possibleDirection(-1, 0, row, col, grid, player) ||
-                Utilities.possibleDirection(1, 0, row, col, grid, player) ||
-                Utilities.possibleDirection(-1, -1, row, col, grid, player) ||
-                Utilities.possibleDirection(1, -1, row, col, grid, player) ||
-                Utilities.possibleDirection(1, 1, row, col, grid, player) ||
-                Utilities.possibleDirection(-1, 1, row, col, grid, player);
+        // Checks all 8 possible directions
+        return Utilities.possibleDirection(NO_DIRECTION, WEST, row, col, grid, player) ||
+                Utilities.possibleDirection(NO_DIRECTION, EAST, row, col, grid, player) ||
+                Utilities.possibleDirection(NORTH, NO_DIRECTION, row, col, grid, player) ||
+                Utilities.possibleDirection(SOUTH, NO_DIRECTION, row, col, grid, player) ||
+                Utilities.possibleDirection(NORTH, WEST, row, col, grid, player) ||
+                Utilities.possibleDirection(SOUTH, WEST, row, col, grid, player) ||
+                Utilities.possibleDirection(SOUTH, EAST, row, col, grid, player) ||
+                Utilities.possibleDirection(NORTH, EAST, row, col, grid, player);
     }
 
+    /*
+    Checks if a move in a certain given row and column is possible
+    in a certain direction(deltaRow, deltaCol) for a certain player on a certain board/grid
+     */
     private static boolean possibleDirection(int deltaRow, int deltaCol, int row, int col, int[][] grid, int player) {
         int currentRow = row;
         int currentCol = col;

@@ -100,6 +100,10 @@ class OthelloGUI extends JFrame implements ActionListener{
         if(freeze) freezeButtons();
     }
 
+    /**
+     * Sets GUI buttons enabled or disabled according to the grid parameter
+     * @param grid
+     */
     void setValidMoves(boolean[][] grid) {
         for(int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS; col++) {
@@ -137,11 +141,7 @@ class OthelloGUI extends JFrame implements ActionListener{
     Disables all buttons
      */
     private void freezeButtons(){
-        for(int row = 0; row < ROWS; row++) {
-            for (int col = 0; col < COLS; col++) {
-                buttons[row][col].setEnabled(false);
-            }
-        }
+        for(OthelloButton[] buttonArray: buttons) for(OthelloButton button: buttonArray) button.setEnabled(false);
     }
 
     /**
@@ -170,6 +170,7 @@ class OthelloGUI extends JFrame implements ActionListener{
 
         }
     }
+
     /*
     Updates a label with time passed
      */
