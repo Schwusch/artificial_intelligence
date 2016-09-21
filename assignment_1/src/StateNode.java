@@ -16,19 +16,21 @@ class StateNode {
     private int player;
     private boolean isEndState = false;
     private int depth;
+    private long deadline;
 
     /**
      * Creates a root node that represents the board currently as it is.
-     *
-     * @param gridState The state that the board is currently in
+     *  @param gridState The state that the board is currently in
      * @param player The player about to make a move
      * @param controller The guy we call when something exciting happens
+     * @param deadline
      */
-    StateNode(int[][] gridState, int player, OthelloController controller){
+    StateNode(int[][] gridState, int player, OthelloController controller, long deadline){
         this.gridState = gridState;
         this.player = player;
         this.depth = 0;
-        controller.nodeFound();
+        this.deadline = deadline;
+        controller.nodeFound(this.depth);
         findAllChanges(controller);
     }
 
@@ -42,13 +44,14 @@ class StateNode {
      * @param depth How many moves we should predict and evaluate
      * @param controller The guy we call when something exciting happens
      */
-    private StateNode(int[][] gridState, int player, int alpha, int beta, int depth, OthelloController controller){
+    private StateNode(int[][] gridState, int player, int alpha, int beta, int depth, OthelloController controller, long deadline){
         this.gridState = gridState;
         this.player = player;
         this.alpha = alpha;
         this.beta = beta;
         this.depth = depth;
-        controller.nodeFound();
+        this.deadline = deadline;
+        controller.nodeFound(depth);
         findAllChanges(controller);
     }
 
@@ -90,14 +93,23 @@ class StateNode {
         // Check if there is any limitations or we should keep looking
         if(this.shouldKeepLooking()) {
             boolean[][] possibleMoves = Utilities.findValidMoves(gridState, player);
+            int possibleMovesCount = Utilities.numberOfValidMoves(possibleMoves);
             // Loop through matrix to find vacant move spots
             pruningLoop:
             for (int row = 0; row < OthelloGUI.ROWS; row++) {
                 for (int col = 0; col < OthelloGUI.COLS; col++) {
                     if (possibleMoves[row][col]) {
-                        StateChange change = createChange(row, col, controller);
+                        // Check how much time we have left to calculate
+                        long disposableTime = this.deadline - System.currentTimeMillis();
+                        // Split the time fairly between child nodes
+                        long childNodeDeadline =
+                                this.deadline - ((disposableTime / possibleMovesCount) * (possibleMovesCount - 1));
+
+                        StateChange change = createChange(row, col, controller, childNodeDeadline);
                         possibleChanges.add(change);
 
+                        // Now we have one less possible move
+                        possibleMovesCount--;
                         // Check if we've found a prunable node
                         if (prune(change))
                             break pruningLoop;
@@ -132,7 +144,7 @@ class StateNode {
     This is the recursive part which doesn't return until we've hit a base case,
     which is when a limit has been reached or all non pruned leafnodes has been found
      */
-    private StateChange createChange(int row, int col, OthelloController controller) {
+    private StateChange createChange(int row, int col, OthelloController controller, long childNodeDeadline) {
         OthelloCoordinate move = new OthelloCoordinate(row, col);
         int[][] newGridState = Utilities.calculateBoardChange(this.gridState, move, this.player);
         
@@ -147,7 +159,9 @@ class StateNode {
                 this.beta,
                 // Increase depth searched
                 this.depth + 1,
-                controller);
+                controller,
+                // The new nodes deadline
+                childNodeDeadline);
 
         return new StateChange(newState, move);
     }
@@ -157,6 +171,6 @@ class StateNode {
      */
     private boolean shouldKeepLooking() {
 
-        return this.depth != StartOthello.SEARCH_DEPTH;
+        return System.currentTimeMillis() < this.deadline;
     }
 }

@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.util.Random;
 
 /**
  * Created by Jonathan Böcker on 2016-09-09.
@@ -10,6 +9,7 @@ class OthelloController {
     private OthelloGUI gui;
     private int[][] grid = new int[OthelloGUI.ROWS][OthelloGUI.COLS];
     private int nodesExamined = 0;
+    private int depth = 0;
 
     /**
      * Initializes a GUI with an Othelloboard
@@ -36,8 +36,12 @@ class OthelloController {
     /**
      * Increases the node count and updates the GUI every 1000nd node
      */
-    void nodeFound() {
+    void nodeFound(int depth) {
         this.nodesExamined++;
+        if(depth > this.depth) {
+            this.depth = depth;
+            SwingUtilities.invokeLater(() -> gui.updateDepthLabel(depth));
+        }
         if(this.nodesExamined % 1000 == 0)
             SwingUtilities.invokeLater(() -> gui.updateNodeCount(nodesExamined));
     }
@@ -45,17 +49,21 @@ class OthelloController {
     /**
      * When the human player presses a button, the AI has to figure out the best next move
      * @param coord The board coordinate pressed by human
+     * @param timeStarted
      */
-    void buttonPressed(OthelloCoordinate coord) {
+    void buttonPressed(OthelloCoordinate coord, long timeStarted) {
         // Reset the node count
         this.nodesExamined = 0;
+        this.depth = 0;
+        // Set a new deadline 4.5 seconds in the future
+        long deadline = timeStarted + 4500L;
 
         // Flips a few bricks if possible and update the GUI board
         this.grid = Utilities.calculateBoardChange(this.grid, coord, OthelloGUI.HUMAN);
         SwingUtilities.invokeLater(() -> gui.setGrid(grid, true));
 
         // AI finds the best possible counter move and flips a lot of bricks if possible :)
-        StateNode node = new StateNode(grid, OthelloGUI.AI, this);
+        StateNode node = new StateNode(grid, OthelloGUI.AI, this, deadline);
         if(node.hasMove()) {
             OthelloCoordinate computerMove = node.getBestMove();
             this.grid = Utilities.calculateBoardChange(this.grid, computerMove, OthelloGUI.AI);
@@ -63,7 +71,10 @@ class OthelloController {
 
         // If human doesn't have any moves and AI has, AI makes another move
         while (!Utilities.hasPossibleMoves(this.grid, OthelloGUI.HUMAN) && Utilities.hasPossibleMoves(this.grid, OthelloGUI.AI)){
-            node = new StateNode(grid, OthelloGUI.AI, this);
+            // Give computer another 4.5 seconds
+            deadline = deadline + 4500L;
+
+            node = new StateNode(grid, OthelloGUI.AI, this, deadline);
             OthelloCoordinate computerMove = node.getBestMove();
             this.grid = Utilities.calculateBoardChange(this.grid, computerMove, OthelloGUI.AI);
             updateGUI();

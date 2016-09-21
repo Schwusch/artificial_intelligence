@@ -42,7 +42,7 @@ class OthelloGUI extends JFrame implements ActionListener{
         JPanel textsPanel = new JPanel(new GridLayout(4,0));
         infoLabel.setText("Lets Play! You are black bricks.");
         infoLabel.setPreferredSize(new Dimension(280, 50));
-        depthLabel.setText("Current depth limitation: " + StartOthello.SEARCH_DEPTH);
+        depthLabel.setText("Current calculated moves ahead: ");
         depthLabel.setPreferredSize(new Dimension(280, 50));
         nodeCountLabel.setText("Nodes examined: 0");
         nodeCountLabel.setPreferredSize(new Dimension(280, 50));
@@ -76,6 +76,10 @@ class OthelloGUI extends JFrame implements ActionListener{
     // Dito
     void updateInfo(String text) {
         infoLabel.setText(text);
+    }
+    // Dito
+    void updateDepthLabel(int depth) {
+        depthLabel.setText("Current calculated moves ahead: " + depth);
     }
     // Dito
     void stopTimer(){
@@ -158,7 +162,7 @@ class OthelloGUI extends JFrame implements ActionListener{
             SwingWorker worker = new SwingWorker() {
                 @Override
                 protected Object doInBackground() throws Exception {
-                    controller.buttonPressed(button.getCoord());
+                    controller.buttonPressed(button.getCoord(), timeStarted);
                     return null;
                 }
             };

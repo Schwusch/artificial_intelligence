@@ -102,6 +102,15 @@ class Utilities {
 
         return validMoves;
     }
+
+    static int numberOfValidMoves(boolean[][] grid) {
+        int count = 0;
+        for (int i = 0; i < grid.length; i++)
+            for (int j = 0; j < grid[i].length; j++)
+                if(grid[i][j]) count++;
+
+        return count;
+    }
     static boolean hasPossibleMoves(int[][] grid, int player){
         boolean[][] validMoves = findValidMoves(grid, player);
         for (int i = 0; i < grid.length; i++)
