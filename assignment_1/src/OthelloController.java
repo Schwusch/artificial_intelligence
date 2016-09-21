@@ -16,10 +16,10 @@ class OthelloController {
      */
     OthelloController(){
         // Initialize the board with 4 bricks
-        grid[1][1] = OthelloGUI.HUMAN;
-        grid[2][2] = OthelloGUI.HUMAN;
-        grid[1][2] = OthelloGUI.AI;
-        grid[2][1] = OthelloGUI.AI;
+        grid[OthelloGUI.ROWS/2 - 1][OthelloGUI.COLS/2 - 1] = OthelloGUI.HUMAN;
+        grid[OthelloGUI.ROWS/2][OthelloGUI.COLS/2] = OthelloGUI.HUMAN;
+        grid[OthelloGUI.ROWS/2 - 1][OthelloGUI.COLS/2] = OthelloGUI.AI;
+        grid[OthelloGUI.ROWS/2][OthelloGUI.COLS/2 - 1] = OthelloGUI.AI;
         // Make an interface
         SwingUtilities.invokeLater(() -> {
             gui = new OthelloGUI("Othello", OthelloController.this);
@@ -28,6 +28,7 @@ class OthelloController {
             gui.setVisible(true);
             // Update the GUI
             gui.setGrid(grid, false);
+            gui.setValidMoves(Utilities.findValidMoves(this.grid, OthelloGUI.HUMAN));
         });
 
     }
@@ -48,20 +49,30 @@ class OthelloController {
     void buttonPressed(OthelloCoordinate coord) {
         // Reset the node count
         this.nodesExamined = 0;
+
         // Flips a few bricks if possible and update the GUI board
         this.grid = Utilities.calculateBoardChange(this.grid, coord, OthelloGUI.HUMAN);
         SwingUtilities.invokeLater(() -> gui.setGrid(grid, true));
 
         // AI finds the best possible counter move and flips a lot of bricks if possible :)
-        OthelloCoordinate computerMove = new StateNode(grid, OthelloGUI.AI, this).getBestMove();
-        this.grid = Utilities.calculateBoardChange(this.grid, computerMove, OthelloGUI.AI);
+        StateNode node = new StateNode(grid, OthelloGUI.AI, this);
+        if(node.hasMove()) {
+            OthelloCoordinate computerMove = node.getBestMove();
+            this.grid = Utilities.calculateBoardChange(this.grid, computerMove, OthelloGUI.AI);
+        }
+
+        // If human doesn't have any moves and AI has, AI makes another move
+        while (!Utilities.hasPossibleMoves(this.grid, OthelloGUI.HUMAN) && Utilities.hasPossibleMoves(this.grid, OthelloGUI.AI)){
+            node = new StateNode(grid, OthelloGUI.AI, this);
+            OthelloCoordinate computerMove = node.getBestMove();
+            this.grid = Utilities.calculateBoardChange(this.grid, computerMove, OthelloGUI.AI);
+            updateGUI();
+            // Reset the node count
+            this.nodesExamined = 0;
+        }
 
         // Update GUI stuff
-        SwingUtilities.invokeLater(() -> {
-                    gui.setGrid(grid, false);
-                    gui.stopTimer();
-                    gui.updateNodeCount(nodesExamined);
-                });
+        updateGUI();
 
         // Check if the game has been finished and if it has, who is the winner
         if(Utilities.isGameFinished(this.grid)) {
@@ -76,5 +87,14 @@ class OthelloController {
             // Update GUI message
             SwingUtilities.invokeLater(() -> gui.updateInfo(info));
         }
+    }
+
+    private void updateGUI() {
+        SwingUtilities.invokeLater(() -> {
+            gui.setGrid(grid, false);
+            gui.setValidMoves(Utilities.findValidMoves(this.grid, OthelloGUI.HUMAN));
+            gui.stopTimer();
+            gui.updateNodeCount(nodesExamined);
+        });
     }
 }

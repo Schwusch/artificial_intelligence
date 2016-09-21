@@ -13,7 +13,11 @@ class Utilities {
      * @param board The board to be checked
      * @return False if there is vacant spots, True if there is not
      */
-    static Boolean isGameFinished(int[][] board) {
+    static boolean isGameFinished(int[][] board) {
+
+        if(Utilities.hasPossibleMoves(board, OthelloGUI.HUMAN) || Utilities.hasPossibleMoves(board, OthelloGUI.AI))
+            return false;
+
         for (int[] aBoard : board)
             for (int anABoard : aBoard)
                 if (anABoard == OthelloGUI.NONE)
@@ -88,6 +92,62 @@ class Utilities {
      */
     static float round(float d, int decimalPlace) {
         return BigDecimal.valueOf(d).setScale(decimalPlace,BigDecimal.ROUND_HALF_UP).floatValue();
+    }
+
+    static boolean[][] findValidMoves(int[][] grid, int player) {
+        boolean[][] validMoves = new boolean[grid.length][grid[0].length];
+        for (int i = 0; i < grid.length; i++)
+            for (int j = 0; j < grid[i].length; j++)
+                validMoves[i][j] = grid[i][j] == OthelloGUI.NONE && isValidMove(grid, i, j, player);
+
+        return validMoves;
+    }
+    static boolean hasPossibleMoves(int[][] grid, int player){
+        boolean[][] validMoves = findValidMoves(grid, player);
+        for (int i = 0; i < grid.length; i++)
+            for (int j = 0; j < grid[i].length; j++)
+                if(validMoves[i][j])
+                    return true;
+        return false;
+    }
+
+    private static boolean isValidMove(int[][] grid, int row, int col, int player){
+
+        return Utilities.possibleDirection(0, -1, row, col, grid, player) ||
+                Utilities.possibleDirection(0, 1, row, col, grid, player) ||
+                Utilities.possibleDirection(-1, 0, row, col, grid, player) ||
+                Utilities.possibleDirection(1, 0, row, col, grid, player) ||
+                Utilities.possibleDirection(-1, -1, row, col, grid, player) ||
+                Utilities.possibleDirection(1, -1, row, col, grid, player) ||
+                Utilities.possibleDirection(1, 1, row, col, grid, player) ||
+                Utilities.possibleDirection(-1, 1, row, col, grid, player);
+    }
+
+    private static boolean possibleDirection(int deltaRow, int deltaCol, int row, int col, int[][] grid, int player) {
+        int currentRow = row;
+        int currentCol = col;
+
+        if(currentRow + deltaRow < grid.length &&
+                currentRow + deltaRow >= 0 &&
+                currentCol + deltaCol < grid[0].length &&
+                currentCol + deltaCol >= 0 &&
+                grid[currentRow + deltaRow][currentCol + deltaCol] != -player) {
+            return false;
+        }
+
+        currentCol += 2 * deltaCol;
+        currentRow += 2 * deltaRow;
+        while (currentCol < OthelloGUI.COLS && currentCol >= 0 && currentRow < OthelloGUI.ROWS && currentRow >= 0) {
+            if(grid[currentRow][currentCol] == OthelloGUI.NONE ) {
+               return false;
+            } else if (grid[currentRow][currentCol] == player) {
+                return true;
+            }
+            currentCol += deltaCol;
+            currentRow += deltaRow;
+        }
+
+        return false;
     }
 
     /*

@@ -77,6 +77,10 @@ class StateNode {
         }
     }
 
+    public boolean hasMove() {
+        return bestChange != null;
+    }
+
     /*
     Find and save all possible state changes, save pre and post state and the move that lead to state change
      */
@@ -85,11 +89,12 @@ class StateNode {
 
         // Check if there is any limitations or we should keep looking
         if(this.shouldKeepLooking()) {
+            boolean[][] possibleMoves = Utilities.findValidMoves(gridState, player);
             // Loop through matrix to find vacant move spots
             pruningLoop:
             for (int row = 0; row < OthelloGUI.ROWS; row++) {
                 for (int col = 0; col < OthelloGUI.COLS; col++) {
-                    if (this.gridState[row][col] == OthelloGUI.NONE) {
+                    if (possibleMoves[row][col]) {
                         StateChange change = createChange(row, col, controller);
                         possibleChanges.add(change);
 

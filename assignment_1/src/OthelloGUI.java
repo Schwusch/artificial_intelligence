@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.math.BigDecimal;
 
 /**
  * Created by Jonathan Böcker on 2016-09-09.
@@ -11,8 +10,8 @@ import java.math.BigDecimal;
  * The buttons are clickable!(Almost guaranteed*)
  */
 class OthelloGUI extends JFrame implements ActionListener{
-    static final int ROWS = 4;
-    static final int COLS = 4;
+    static final int ROWS = 8;
+    static final int COLS = 8;
     static final int AI   = 1;
     static final int HUMAN= -1;
     static final int NONE = 0;
@@ -97,6 +96,19 @@ class OthelloGUI extends JFrame implements ActionListener{
         if(freeze) freezeButtons();
     }
 
+    void setValidMoves(boolean[][] grid) {
+        for(int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
+                if(grid[row][col]) {
+                    buttons[row][col].setEnabled(true);
+                    buttons[row][col].setBackground(new Color(0,140,60));
+                } else {
+                    buttons[row][col].setEnabled(false);
+                }
+            }
+        }
+    }
+
     /*
     Enables/Disables button depending if there is a brick on it or not
      */
@@ -112,6 +124,7 @@ class OthelloGUI extends JFrame implements ActionListener{
                 break;
             default:
                 buttons[row][col].setEnabled(true);
+                buttons[row][col].setBackground(new Color(0,99,33));
                 break;
         }
     }
