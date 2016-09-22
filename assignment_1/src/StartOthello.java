@@ -5,6 +5,7 @@
  */
 public class StartOthello {
     //TODO make Othello
+    public static final long THINKING_TIME = 5000L;
     public static void main(String[] args){
         new OthelloController();
     }

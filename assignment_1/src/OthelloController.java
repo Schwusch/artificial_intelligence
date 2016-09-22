@@ -71,8 +71,8 @@ class OthelloController {
 
         // If human doesn't have any moves and AI has, AI makes another move
         while (!Utilities.hasPossibleMoves(this.grid, OthelloGUI.HUMAN) && Utilities.hasPossibleMoves(this.grid, OthelloGUI.AI)){
-            // Give computer another 4.5 seconds
-            deadline = deadline + 4500L;
+            // Give computer another 5 seconds
+            deadline = deadline + StartOthello.THINKING_TIME;
 
             node = new StateNode(grid, OthelloGUI.AI, this, deadline);
             OthelloCoordinate computerMove = node.getBestMove();
