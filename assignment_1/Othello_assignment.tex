@@ -1,0 +1,181 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{AI Othello Assignment}
+\author{Jonathan Böcker}
+\date{September 2016}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{color}
+\usepackage[a4paper, margin=1in]{geometry}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+
+\lstset{style=mystyle}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+This assignment consists of implementing the alpha-beta pruning search algorithm
+and heuristic evaluation functions for an Othello AI opponent. I chose to implement
+proper Othello rules and expand the board area to an 8 by 8 grid to make it a little
+more challenging. I also chose to make the search algorithm with a iterative deepening search,
+making it time dependent instead.
+This makes the algorithm `smarter' the faster the host CPU is.
+
+\section{Building the search algorithm}
+I chose to represent the search nodes as states, that holds a snapshot of all important
+variables in the state. It is important to understand this class in order to understand
+the search algorithm:
+
+\begin{lstlisting}[language=Java]
+class StateNode {
+    private int[][] gridState;
+    private int alpha = Integer.MIN_VALUE;
+    private int beta = Integer.MAX_VALUE;
+    private int player;
+    private boolean isEndState = false;
+    private int depth;
+    private long deadline;
+    private StateChange bestChange;
+}
+\end{lstlisting}
+
+\begin{itemize}
+\item The \verb|gridState| variable is an integer matrix where values span from -1 to 1,
+where -1 represents a human player brick, 1 represents an AI brick and 0 represents
+an unoccupied space. This is a application wide representation the Othello board.
+
+ \item The \verb|alpha| and \verb|beta| variables is important to the pruning algorithm at
+every node to evaluate the need of searching further down in the current branch.
+
+\item The \verb|player| int variable is either 1(AI) or -1(Human) and tells the algorithm
+which player is about to make the next virtual draw in this node.
+
+\item The \verb|isEndState| boolean variable is used to determine if a total board score
+is relevant. This is important when the algorithm needs to know if the node is a
+leafnode e.g. when the algorithm isn't allowed to search further due to time constraints.
+
+\item The \verb|depth| int variable is only for assignment requirements sake. It keeps
+track of current search depth, making it possible to graphically display the search depth for the user.
+
+\item The \verb|deadline| long integer variable is a timestamp, for when the search
+algorithm must stop searching in this branch in order to uphold the 5 second
+draw restraint.
+
+\item The last instance variable \verb|bestChange| is an object with the following specifications:
+\end{itemize}
+
+\begin{lstlisting}[language=Java]
+class StateChange {
+    private StateNode endNode;
+    private OthelloCoordinate move;
+}
+\end{lstlisting}
+
+Its purpose is to keep track of the, according to the search algorithm, best state
+change and by extension the best next draw for this node. This is most useful
+for the root node when asked to provide the next AI draw. In this context the draw
+is an object named move, simply holding a row and a column value in the board matrix as follows:
+\begin{lstlisting}[language=Java]
+class OthelloCoordinate {
+    private int row;
+    private int col;
+}
+\end{lstlisting}
+
+\verb|StateNode| has one package-private constructor which is called when the application
+controller wants a calculated draw from the AI:
+
+\begin{lstlisting}[language=Java]
+StateNode(int[][] gridState, OthelloController controller, long deadline){
+      this.gridState = gridState;
+      this.player = OthelloGUI.AI;
+      this.depth = 0;
+      this.deadline = deadline;
+      controller.nodeFound(this.depth);
+      findAllStateChanges(controller);
+}
+\end{lstlisting}
+
+The constructor passes on the \verb|OthelloController| to the recursive method
+\verb|findAllStateChanges()| after it has reported itself as a found node at depth 0.
+One of the first things done in \verb|findAllStateChanges()| is checking if it should
+attempt to find more nodes:
+
+\begin{lstlisting}[language=Java]
+private void findAllStateChanges(OthelloController controller){
+      ArrayList<StateChange> possibleChanges = new ArrayList<>();
+      // Check if there is any limitations or we should keep looking
+      if(this.shouldKeepLooking()) {
+      ...
+\end{lstlisting}
+
+The method \verb|shouldKeepLooking()| has the purpose of limiting the search depth
+according to some criteria, in this case it's a time limit:
+
+\begin{lstlisting}[language=Java]
+private boolean shouldKeepLooking() {
+        return System.currentTimeMillis() < this.deadline;
+}
+\end{lstlisting}
+
+If \verb|shouldKeepLooking()| returns true, \verb|findAllStateChanges()| will continue to take
+all possible draws and create a new \verb|StateNode| for each one using the private
+constructor solely for recursive calls:
+
+\begin{lstlisting}[language=Java]
+private StateNode(int[][] gridState, int player, int alpha, int beta, int depth, OthelloController controller, long deadline)
+\end{lstlisting}
+
+The private constructor requires a little more information. The \verb|player|
+variable oscillates between Human or AI between every recursive call in order for the
+pruning algorithm to decide whether it's a prunable branch or not. The player variable
+also controls if alpha or beta is passed back to the parent node when asked for its value.
+
+\section{The pruning condition}
+The pruning algorithms reasoning is that if the current node is AI, the child node
+must be human. If that's so, it wants to see if the child nodes beta value is larger
+than its own alpha value. Because if it is, that path of draws is the most favorable
+for the moment, so it saves that draw and beta value as its alpha value until it finds a better one.
+
+In the other way around, when the current node is human and child node is AI, it
+checks if its child nodes alpha value is smaller than its beta.
+If that's true it updates its beta to the child nodes alpha and saves the draw
+as the most favorable draw. If the child node is a leaf node, it simply compares with the board score count.
+
+Lastly, the condition that decides whether there's reason to keep looking in that branch,
+is if the current node is AI and its alpha is larger than its beta. If that's true there is
+no point in looking further into that branch.
+In the other way around, if the node is human and its alpha is smaller than its beta, there is
+no reason to continue in that branch.
+
+\section{The evaluation functions}
+\end{document}

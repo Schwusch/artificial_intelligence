@@ -56,14 +56,14 @@ class OthelloController {
         this.nodesExamined = 0;
         this.depth = 0;
         // Set a new deadline 4.5 seconds in the future
-        long deadline = timeStarted + 4500L;
+        long deadline = timeStarted + StartOthello.THINKING_TIME;
 
         // Flips a few bricks if possible and update the GUI board
         this.grid = Utilities.calculateBoardChange(this.grid, coord, OthelloGUI.HUMAN);
         SwingUtilities.invokeLater(() -> gui.setGrid(grid, true));
 
         // AI finds the best possible counter move and flips a lot of bricks if possible :)
-        StateNode node = new StateNode(grid, OthelloGUI.AI, this, deadline);
+        StateNode node = new StateNode(grid, this, deadline);
         if(node.hasMove()) {
             OthelloCoordinate computerMove = node.getBestMove();
             this.grid = Utilities.calculateBoardChange(this.grid, computerMove, OthelloGUI.AI);
@@ -74,7 +74,7 @@ class OthelloController {
             // Give computer another 5 seconds
             deadline = deadline + StartOthello.THINKING_TIME;
 
-            node = new StateNode(grid, OthelloGUI.AI, this, deadline);
+            node = new StateNode(grid, this, deadline);
             OthelloCoordinate computerMove = node.getBestMove();
             this.grid = Utilities.calculateBoardChange(this.grid, computerMove, OthelloGUI.AI);
             updateGUI();

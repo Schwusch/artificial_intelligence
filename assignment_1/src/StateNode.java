@@ -20,18 +20,17 @@ class StateNode {
 
     /**
      * Creates a root node that represents the board currently as it is.
-     *  @param gridState The state that the board is currently in
-     * @param player The player about to make a move
+     * @param gridState The state that the board is currently in
      * @param controller The guy we call when something exciting happens
      * @param deadline
      */
-    StateNode(int[][] gridState, int player, OthelloController controller, long deadline){
+    StateNode(int[][] gridState, OthelloController controller, long deadline){
         this.gridState = gridState;
-        this.player = player;
+        this.player = OthelloGUI.AI;
         this.depth = 0;
         this.deadline = deadline;
         controller.nodeFound(this.depth);
-        findAllChanges(controller);
+        findAllStateChanges(controller);
     }
 
     /**
@@ -52,7 +51,7 @@ class StateNode {
         this.depth = depth;
         this.deadline = deadline;
         controller.nodeFound(depth);
-        findAllChanges(controller);
+        findAllStateChanges(controller);
     }
 
     /**
@@ -71,7 +70,7 @@ class StateNode {
      * @return the value
      */
     int getValue() {
-        if(this.isEndState) {
+        if(this.isEndState){
             return Utilities.boardScore(this.gridState);
         } else if(this.player == OthelloGUI.AI) {
             return this.alpha;
@@ -87,7 +86,7 @@ class StateNode {
     /*
     Find and save all possible state changes, save post state and the move that lead to state change
      */
-    private void findAllChanges(OthelloController controller){
+    private void findAllStateChanges(OthelloController controller){
         ArrayList<StateChange> possibleChanges = new ArrayList<>();
 
         // Check if there is any limitations or we should keep looking
@@ -128,15 +127,16 @@ class StateNode {
      */
     private boolean prune(StateChange change){
         int value = change.getEndNode().getValue();
-        if(this.player == OthelloGUI.HUMAN && value < beta) {
+        if(this.player == OthelloGUI.HUMAN && value <= beta) {
             beta = value;
             bestChange = change;
 
-        } else if (this.player == OthelloGUI.AI && value > alpha) {
+        } else if (this.player == OthelloGUI.AI && value >= alpha) {
             alpha = value;
             bestChange = change;
         }
-        return this.player == OthelloGUI.HUMAN && alpha >= beta;
+        return this.player == OthelloGUI.HUMAN && this.alpha > this.beta ||
+                this.player == OthelloGUI.AI && this.alpha < this.beta;
     }
 
     /*
@@ -171,7 +171,6 @@ class StateNode {
     UPDATE: It's done, I think. Tell your boss.
      */
     private boolean shouldKeepLooking() {
-
         return System.currentTimeMillis() < this.deadline;
     }
 }
