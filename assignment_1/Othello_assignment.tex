@@ -52,7 +52,7 @@ This makes the algorithm `smarter' the faster the host CPU is.
 
 \section{Building the search algorithm}
 I chose to represent the search nodes as states, that holds a snapshot of all important
-variables in the state. It is important to understand this class in order to understand
+variables at the time of evaluation. It is important to understand this class in order to understand
 the search algorithm:
 
 \begin{lstlisting}[language=Java]
@@ -132,7 +132,7 @@ attempt to find more nodes:
 
 \begin{lstlisting}[language=Java]
 private void findAllStateChanges(OthelloController controller){
-      ArrayList<StateChange> possibleChanges = new ArrayList<>();
+      ArrayList<StateChange> exploredChanges = new ArrayList<>();
       // Check if there is any limitations or we should keep looking
       if(this.shouldKeepLooking()) {
       ...
@@ -161,6 +161,38 @@ pruning algorithm to decide whether it's a prunable branch or not. The player va
 also controls if alpha or beta is passed back to the parent node when asked for its value.
 
 \section{The pruning condition}
+When looping through the matrix and exploring nodes in the current tree branch, there might be no need to
+search further. Towards the end of the \verb|findAllStateChanges()| evaluation loop, the algorithm checks
+and perhaps updates the alpha end beta values as follows:
+
+\begin{lstlisting}[language=Java]
+private void findAllStateChanges(OthelloController controller){
+...
+// Check if we've found a prunable branch
+  if (prune(change))
+      break evaluationLoop;
+\end{lstlisting}
+
+It makes a call to \verb|prune()| with a calculated state change as the argument,
+which returns \verb|true| or \verb|false| whether to cancel the search for more nodes.
+The \verb|prune()| method looks as follows:
+
+\newpage
+\begin{lstlisting}[language=Java]
+private boolean prune(StateChange change){
+    int value = change.getEndNode().getValue();
+    if(this.player == OthelloGUI.HUMAN && value <= beta) {
+        beta = value;
+        bestChange = change;
+    } else if (this.player == OthelloGUI.AI && value >= alpha) {
+        alpha = value;
+        bestChange = change;
+    }
+    return this.player == OthelloGUI.HUMAN && this.alpha > this.beta ||
+            this.player == OthelloGUI.AI && this.alpha < this.beta;
+}
+\end{lstlisting}
+
 The pruning algorithms reasoning is that if the current node is AI, the child node
 must be human. If that's so, it wants to see if the child nodes beta value is larger
 than its own alpha value. Because if it is, that path of draws is the most favorable
@@ -176,6 +208,8 @@ is if the current node is AI and its alpha is larger than its beta. If that's tr
 no point in looking further into that branch.
 In the other way around, if the node is human and its alpha is smaller than its beta, there is
 no reason to continue in that branch.
+
+
 
 \section{The evaluation functions}
 \end{document}

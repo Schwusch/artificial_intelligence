@@ -87,14 +87,14 @@ class StateNode {
     Find and save all possible state changes, save post state and the move that lead to state change
      */
     private void findAllStateChanges(OthelloController controller){
-        ArrayList<StateChange> possibleChanges = new ArrayList<>();
+        ArrayList<StateChange> exploredChanges = new ArrayList<>();
 
         // Check if there is any limitations or we should keep looking
         if(this.shouldKeepLooking()) {
             boolean[][] possibleMoves = Utilities.findValidMoves(gridState, player);
             int possibleMovesCount = Utilities.numberOfValidMoves(possibleMoves);
             // Loop through matrix to find vacant move spots
-            pruningLoop:
+            evaluationLoop:
             for (int row = 0; row < OthelloGUI.ROWS; row++) {
                 for (int col = 0; col < OthelloGUI.COLS; col++) {
                     if (possibleMoves[row][col]) {
@@ -105,19 +105,19 @@ class StateNode {
                                 this.deadline - ((disposableTime / possibleMovesCount) * (possibleMovesCount - 1));
 
                         StateChange change = createChange(row, col, controller, childNodeDeadline);
-                        possibleChanges.add(change);
+                        exploredChanges.add(change);
 
                         // Now we have one less possible move
                         possibleMovesCount--;
-                        // Check if we've found a prunable node
+                        // Check if we've found a prunable branch
                         if (prune(change))
-                            break pruningLoop;
+                            break evaluationLoop;
                     }
                 }
             }
         }
         // Have we perhaps hit a bottom in the search tree?
-        if (possibleChanges.size() == 0) {
+        if (exploredChanges.size() == 0) {
             this.isEndState = true;
         }
     }
@@ -130,7 +130,6 @@ class StateNode {
         if(this.player == OthelloGUI.HUMAN && value <= beta) {
             beta = value;
             bestChange = change;
-
         } else if (this.player == OthelloGUI.AI && value >= alpha) {
             alpha = value;
             bestChange = change;
