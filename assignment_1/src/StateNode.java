@@ -16,7 +16,6 @@ class StateNode {
     private int player;
     private boolean isEndState = false;
     private int depth;
-    private long deadline;
 
     /**
      * Creates a root node that represents the board currently as it is.
@@ -28,9 +27,8 @@ class StateNode {
         this.gridState = gridState;
         this.player = OthelloGUI.AI;
         this.depth = 0;
-        this.deadline = deadline;
         controller.nodeFound(this.depth);
-        findAllStateChanges(controller);
+        findAllStateChanges(controller, deadline);
     }
 
     /**
@@ -49,9 +47,8 @@ class StateNode {
         this.alpha = alpha;
         this.beta = beta;
         this.depth = depth;
-        this.deadline = deadline;
         controller.nodeFound(depth);
-        findAllStateChanges(controller);
+        findAllStateChanges(controller, deadline);
     }
 
     /**
@@ -86,11 +83,11 @@ class StateNode {
     /*
     Find and save all possible state changes, save post state and the move that lead to state change
      */
-    private void findAllStateChanges(OthelloController controller){
+    private void findAllStateChanges(OthelloController controller, long deadline){
         ArrayList<StateChange> exploredChanges = new ArrayList<>();
 
         // Check if there is any limitations or we should keep looking
-        if(this.shouldKeepLooking()) {
+        if(this.shouldKeepLooking(deadline)) {
             boolean[][] possibleMoves = Utilities.findValidMoves(gridState, player);
             int possibleMovesCount = Utilities.numberOfValidMoves(possibleMoves);
             // Loop through matrix to find vacant move spots
@@ -99,10 +96,10 @@ class StateNode {
                 for (int col = 0; col < OthelloGUI.COLS; col++) {
                     if (possibleMoves[row][col]) {
                         // Check how much time we have left to calculate
-                        long disposableTime = this.deadline - System.currentTimeMillis();
+                        long disposableTime = deadline - System.currentTimeMillis();
                         // Split the time fairly between child nodes
                         long childNodeDeadline =
-                                this.deadline - ((disposableTime / possibleMovesCount) * (possibleMovesCount - 1));
+                                deadline - ((disposableTime / possibleMovesCount) * (possibleMovesCount - 1));
 
                         StateChange change = createChange(row, col, controller, childNodeDeadline);
                         exploredChanges.add(change);
@@ -169,7 +166,7 @@ class StateNode {
     TODO: Implement a time limitation to the algorithm
     UPDATE: It's done, I think. Tell your boss.
      */
-    private boolean shouldKeepLooking() {
-        return System.currentTimeMillis() < this.deadline;
+    private boolean shouldKeepLooking(long deadline) {
+        return System.currentTimeMillis() < deadline;
     }
 }

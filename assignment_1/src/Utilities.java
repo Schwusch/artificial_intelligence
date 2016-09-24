@@ -59,12 +59,8 @@ class Utilities {
             System.out.print("Error: making move on a none empty space");
 
         } else {
-            int currentRow = move.getRow();
-            int currentCol = move.getCol();
-
             // Put the player brick down
-            afterMove[currentRow][currentCol] = player;
-
+            afterMove[move.getRow()][move.getCol()] = player;
             // Check in west direction
             afterMove = Utilities.lookInDirection(NO_DIRECTION, WEST, move, afterMove, player);
             // Check in east direction
@@ -180,11 +176,8 @@ class Utilities {
     Checks if there is bricks to be flipped in a given direction and flips accordingly to Othello rules
      */
     private static int[][] lookInDirection(int deltaRow, int deltaCol, OthelloCoordinate move, int[][] grid, int player) {
-        int currentRow = move.getRow();
-        int currentCol = move.getCol();
-
-        currentCol += deltaCol;
-        currentRow += deltaRow;
+        int currentRow = move.getRow() + deltaRow;
+        int currentCol = move.getCol() + deltaCol;
         while (currentCol < OthelloGUI.COLS && currentCol >= 0 && currentRow < OthelloGUI.ROWS && currentRow >= 0) {
             if(grid[currentRow][currentCol] == OthelloGUI.NONE) {
                 break;
