@@ -73,6 +73,7 @@
 
 ##Intellij be gone
 **/.idea
+*.iml
 
 ##Latex output files
 *.aux
