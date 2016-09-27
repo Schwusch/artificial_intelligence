@@ -75,6 +75,11 @@
 **/.idea
 *.iml
 
+##Eclipse be gone
+**/.classpath
+**/.project
+**/.settings
+
 ##Latex output files
 *.aux
 *.fdb_latexmk
@@ -85,3 +90,6 @@
 *.bbl
 *.blg
 *.toc
+
+## pacman specific stuff
+**/trainingData.txt
