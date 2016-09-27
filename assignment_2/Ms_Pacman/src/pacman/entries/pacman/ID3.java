@@ -1,12 +1,10 @@
 package pacman.entries.pacman;
 
-import com.sun.corba.se.spi.ior.ObjectAdapterId;
 import dataRecording.DataTuple;
 import pacman.game.Constants;
 
-import java.util.ArrayList;
+import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import static dataRecording.DataSaverLoader.LoadPacManData;
 
@@ -36,7 +34,7 @@ public class ID3 {
             System.out.println(key + ": " + tuplePerClass.get(key));
         }
 
-        // How many keys?
+        // Calculate the entropy of the data set
         int keys = Constants.MOVE.values().length;
         double infoD = 0;
 
@@ -44,7 +42,18 @@ public class ID3 {
             double count = (double)tuplePerClass.get(move);
             infoD += -(count/(double)data.length) *
                     (Math.log(count/(double)data.length) / Math.log(2));
-            System.out.println("infoD: " + infoD);
+        }
+
+        System.out.println("infoD: " + infoD);
+        System.out.println("\nObject attributes and values:");
+
+        // Lets see if we can access the Fields via reflection, perhaps not the most correct approach
+        Class<?> instance = data[0].getClass();
+        // I might also use .toGenericString() instead of .getName(). This will give the type information as well.
+        for(Field field : instance.getDeclaredFields()) {
+            try {
+                System.out.println(field.getName() + " = " + field.get(data[0]));
+            } catch (IllegalAccessException e) { }
         }
 
         return null;
