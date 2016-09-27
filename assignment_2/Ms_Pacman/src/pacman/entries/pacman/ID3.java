@@ -31,10 +31,22 @@ public class ID3 {
             tuplePerClass.put(tuple.DirectionChosen, tuplePerClass.get(tuple.DirectionChosen) + 1);
         }
 
-        // Print all the keys
+        // Print all the keys and occurrenses
         for (Object key : tuplePerClass.keySet()) {
             System.out.println(key + ": " + tuplePerClass.get(key));
         }
+
+        // How many keys?
+        int keys = Constants.MOVE.values().length;
+        double infoD = 0;
+
+        for (Constants.MOVE move : Constants.MOVE.values()) {
+            double count = (double)tuplePerClass.get(move);
+            infoD += -(count/(double)data.length) *
+                    (Math.log(count/(double)data.length) / Math.log(2));
+            System.out.println("infoD: " + infoD);
+        }
+
         return null;
     }
 
