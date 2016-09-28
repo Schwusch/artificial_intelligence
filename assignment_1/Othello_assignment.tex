@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
+\usepackage{graphicx}
 
 \title{AI Othello Assignment}
 \author{Jonathan Böcker}
@@ -346,6 +347,14 @@ and aborts if it finds an unoccupied cell(line 8-9). When it finds a \verb|playe
 a nested while-loop, iterating in the opposite direction and turning all bricks into \verb|player| bricks until
 it is back to the original draw coordinate. It then breaks the outer while-loop, because the function has done
 what it is supposed to.
+
+Below is a UML class diagram summary of the program:
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{diagram.png}
+\centering
+\caption{A class diagram showing the class relationships of the program.}
+\end{figure}
 
 \bibliographystyle{plain}
 \bibliography{references}

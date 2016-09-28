@@ -1,7 +1,7 @@
 Introduction
 ============
 
-This assignment consists of implementing the alpha-beta pruning search algorithm and heuristic evaluation functions for an Othello AI opponent. I chose to implement proper Othello rules and expand the board area to an 8 by 8 grid to make it a little more challenging. I also chose to make the search algorithm with an iterative deepening search, making it time dependent instead. This makes the algorithm ‘smarter’ the faster the host CPU is.
+This assignment consists of implementing the alpha-beta pruning search algorithm (Russel 2010) and heuristic evaluation functions for an Othello AI opponent. I chose to implement proper Othello rules and expand the board area to an 8 by 8 grid to make it a little more challenging. I also chose to make the search algorithm with an iterative deepening search, making it time dependent instead. This makes the algorithm ‘smarter’ the faster the host CPU is.
 
 Building the search algorithm
 =============================
@@ -228,3 +228,11 @@ private static int[][] lookInDirection(int deltaRow, int deltaCol,
 ```
 
 It starts with looking in the `deltaRow` and `deltaCol` direction for a `player` brick, and aborts if it finds an unoccupied cell(line 8-9). When it finds a `player` brick, it enters a nested while-loop, iterating in the opposite direction and turning all bricks into `player` bricks until it is back to the original draw coordinate. It then breaks the outer while-loop, because the function has done what it is supposed to.
+
+Below is a UML class diagram summary of the program:
+
+<img src="diagram.png" alt="A class diagram showing the class relationships of the program." />
+
+Russel, P., S. Norvig. 2010. *Artificial Intelligence, a Modern Approach*. Prentice Hall. <http://aima.cs.berkeley.edu/>.
+
+
