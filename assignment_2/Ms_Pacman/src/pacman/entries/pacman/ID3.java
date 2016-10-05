@@ -44,6 +44,12 @@ public class ID3 {
                     subset = Utils.createSubset(dataList, field, tag.toString());
                     infoAD += ((double) subset.size() / (double) dataList.size()) * calculateInfoD(subset);
                 }
+            } else if (attr.contains("Dir")) {
+                Constants.MOVE moves[] = Constants.MOVE.values();
+                for (Constants.MOVE move: moves) {
+                    subset = Utils.createSubset(dataList, field, move.toString());
+                    infoAD += ((double) subset.size() / (double) dataList.size()) * calculateInfoD(subset);
+                }
             }
 
             double gain = infoD - infoAD;

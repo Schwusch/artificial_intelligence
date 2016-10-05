@@ -54,8 +54,11 @@ public class Utils {
                 if (attribute.getName().contains("Edible") && attribute.get(tuple).toString().equals(value)) {
                     subset.add(tuple);
                 } else if (attribute.getName().contains("Dist") &&
-                        data.getFirst().discretizeDistance(
+                        tuple.discretizeDistance(
                                 (Integer) attribute.get(tuple)).toString().equals(value)) {
+                    subset.add(tuple);
+                } else if (attribute.getName().contains("Dir") &&
+                        attribute.get(tuple).toString().equals(value)) {
                     subset.add(tuple);
                 }
 

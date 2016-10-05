@@ -58,6 +58,17 @@ public class Node {
                             childNodes.put(tag.toString(), new Node(Utils.findMajorityClass(data)));
                         }
                     }
+                } else if (this.attribute.contains("Dir")) {
+                    Constants.MOVE moves[] = Constants.MOVE.values();
+
+                    for(Constants.MOVE move : moves) {
+                        LinkedList<DataTuple> subset = Utils.createSubset(data, field, move.toString());
+                        if (subset.size() > 0) {
+                            childNodes.put(move.toString(), new Node(subset, attributes));
+                        } else {
+                            childNodes.put(move.toString(), new Node(Utils.findMajorityClass(data)));
+                        }
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -113,6 +124,22 @@ public class Node {
             returnMove = childNodes.get(
                     Utils.getDistanceDiscreteTag(Constants.GHOST.SUE, game)
             ).getDecision(game);
+        } else if (attribute.equals("blinkyDir")) {
+            returnMove = childNodes.get(
+                    game.getGhostLastMoveMade(Constants.GHOST.BLINKY).toString()
+            ).getDecision(game);
+        } else if (attribute.equals("inkyDir")) {
+            returnMove = childNodes.get(
+                    game.getGhostLastMoveMade(Constants.GHOST.INKY).toString()
+            ).getDecision(game);
+        } else if (attribute.equals("pinkyDir")) {
+            returnMove = childNodes.get(
+                    game.getGhostLastMoveMade(Constants.GHOST.PINKY).toString()
+            ).getDecision(game);
+        } else if (attribute.equals("sueDir")) {
+            returnMove = childNodes.get(
+                    game.getGhostLastMoveMade(Constants.GHOST.SUE).toString()
+            ).getDecision(game);
         } else {
             System.out.println("No decision was found at attribute: " + attribute +
                     ", number of child nodes: " + childNodes.size());
@@ -123,18 +150,23 @@ public class Node {
     }
 
     public void print(int depth) {
-        for (int i = 0; i < depth; i++) {
-            System.out.print("  ");
-        }
         if(isLeafNode) {
+            for (int i = 0; i < depth; i++) {
+                System.out.print("| ");
+            }
             System.out.println("Return " + move.toString());
         } else {
+            for (int i = 0; i < depth; i++) {
+                System.out.print("| ");
+            }
+            System.out.println(attribute.toUpperCase());
             for (Map.Entry<String, Node> entry : childNodes.entrySet()) {
-                System.out.println("If " + attribute + " == " + entry.getKey() + ":");
+                for (int i = 0; i < depth; i++) {
+                    System.out.print("| ");
+                }
+                System.out.println("->If " + entry.getKey() + ":");
                 entry.getValue().print(depth + 1);
             }
-
         }
-
     }
 }

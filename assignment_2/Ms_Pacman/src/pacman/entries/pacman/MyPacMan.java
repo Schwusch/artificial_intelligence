@@ -32,6 +32,11 @@ public class MyPacMan extends Controller<MOVE>
 		attributes.add("inkyDist");
 		attributes.add("pinkyDist");
 		attributes.add("sueDist");
+        // Directions
+        attributes.add("blinkyDir");
+        attributes.add("inkyDir");
+        attributes.add("pinkyDir");
+        attributes.add("sueDir");
 		this.rootNode = new Node(dataList, attributes);
 		this.rootNode.print(0);
 	}
