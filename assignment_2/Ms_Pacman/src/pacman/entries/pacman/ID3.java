@@ -4,43 +4,60 @@ import dataRecording.DataTuple;
 import pacman.game.Constants;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
-
-import static dataRecording.DataSaverLoader.LoadPacManData;
+import java.util.Map;
 
 /**
  * Created by Jonathan Böcker on 2016-09-27.
- *
+ * <p>
  * Implementation of the ID3 algorithm for the Pacman assignment
  */
 public class ID3 {
 
-    public static String selectAttribute(LinkedList<DataTuple> dataList, LinkedList<String> attributes){
-
+    public static String selectAttribute(LinkedList<DataTuple> dataList, LinkedList<String> attributes) {
         double infoD = calculateInfoD(dataList);
+        String maxKeyInMap = null;
+        HashMap<String, Double> gains = new HashMap<>();
 
-        System.out.println("infoD: " + infoD);
-        System.out.println("\nObject attributes and values:");
-
-        // I might also use .toGenericString() instead of .getName(). This will give the type information as well.
-        for(Field field : attributes) {
+        for (String attr : attributes) {
+            double infoAD = 0;
+            Field field = null;
             try {
-                System.out.println(field.getName() + " = " + field.get(dataList.getLast()) + " " );
-                if(field.getAnnotatedType().getType().toString().equals("int")) {
-                    System.out.println(
-                            dataList.getLast().discretizeDistance(
-                                    (int)field.get(dataList.getLast())
-                            )
-                    );
-                    DataTuple.DiscreteTag.DiscretizeDouble(0.5);
+                field = DataTuple.class.getDeclaredField(attr);
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+            LinkedList<DataTuple> subset = null;
+
+            if (attr.contains("Edible")) {
+                String arr[] = {"true", "false"};
+                for (String value : arr) {
+                    subset = Utils.createSubset(dataList, field, value);
+                    infoAD += ((double) subset.size() / (double) dataList.size()) * calculateInfoD(subset);
                 }
 
-            } catch (IllegalAccessException e) { }
+            } else if (attr.contains("Dist")) {
+                DataTuple.DiscreteTag tags[] = DataTuple.DiscreteTag.values();
+                for (DataTuple.DiscreteTag tag : tags) {
+                    subset = Utils.createSubset(dataList, field, tag.toString());
+                    infoAD += ((double) subset.size() / (double) dataList.size()) * calculateInfoD(subset);
+                }
+            }
+
+            double gain = infoD - infoAD;
+            gains.put(attr, gain);
         }
 
-        return null;
+        double maxValueInMap = -Double.MAX_VALUE;
+        for (Map.Entry<String, Double> entry : gains.entrySet()) {
+            if (entry.getValue() > maxValueInMap) {
+                maxValueInMap = entry.getValue();
+                maxKeyInMap = entry.getKey();
+            }
+        }
+        return maxKeyInMap;
     }
 
     private static double calculateInfoD(LinkedList<DataTuple> dataTuples) {
@@ -52,7 +69,7 @@ public class ID3 {
         }
 
         // Increase every find by one in the map
-        for(DataTuple tuple : dataTuples) {
+        for (DataTuple tuple : dataTuples) {
             tuplePerClass.put(tuple.DirectionChosen, tuplePerClass.get(tuple.DirectionChosen) + 1);
         }
 
@@ -62,37 +79,14 @@ public class ID3 {
 
 
         for (Constants.MOVE move : Constants.MOVE.values()) {
-            double count = (double)tuplePerClass.get(move);
-            infoD += -(count/(double)dataSize) *
-                    (Math.log(count/(double)dataSize) / Math.log(2));
+            double count = (double) tuplePerClass.get(move);
+            if (count > 0) {
+                infoD += -((double) count / (double) dataSize) *
+                        (Math.log((double) count / (double) dataSize) / (double) Math.log(2));
+            }
         }
         return infoD;
     }
 
-    public static void main(String[] args) {
-        LinkedList<DataTuple> dataList = new LinkedList<>(Arrays.asList(LoadPacManData()));
-        LinkedList<Field> attributes = new LinkedList<>();
-        Class<?> tuple = DataTuple.class;
-        try {
-            // Booleans
-            attributes.add(tuple.getField("isBlinkyEdible"));
-            attributes.add(tuple.getField("isInkyEdible"));
-            attributes.add(tuple.getField("isPinkyEdible"));
-            attributes.add(tuple.getField("isSueEdible"));
-            // Ints
-            attributes.add(tuple.getField("blinkyDist"));
-            attributes.add(tuple.getField("inkyDist"));
-            attributes.add(tuple.getField("pinkyDist"));
-            attributes.add(tuple.getField("sueDist"));
-            // MOVES:s
-           /* attributes.add(tuple.getField("blinkyDir"));
-            attributes.add(tuple.getField("inkyDir"));
-            attributes.add(tuple.getField("pinkyDir"));
-            attributes.add(tuple.getField("sueDir"));*/
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
 
-        selectAttribute(dataList, attributes);
-    }
 }

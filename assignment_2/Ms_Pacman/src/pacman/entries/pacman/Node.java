@@ -4,70 +4,116 @@ import dataRecording.DataTuple;
 import pacman.game.Constants;
 import pacman.game.Game;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Created by schwusch on 2016-10-01.
  */
 public class Node {
     private String attribute;
-    private HashMap<String, Node> childNodes;
+    private HashMap<String, Node> childNodes = new HashMap<>();
     private boolean isLeafNode = false;
     private Constants.MOVE move = Constants.MOVE.NEUTRAL;
 
-    public Node(String attribute) {
-        this.attribute = attribute;
+    public Node(LinkedList<DataTuple> data, LinkedList<String> attributes) {
+        if (data.size() > 0 && Utils.checkifSetHasSameClass(data)) {
+            this.move = data.getFirst().DirectionChosen;
+            this.isLeafNode = true;
+
+        } else if (attributes.size() == 0) {
+            this.move = Utils.findMajorityClass(data);
+            this.isLeafNode = true;
+
+        } else {
+            try {
+                this.attribute = ID3.selectAttribute(data, attributes);
+                attributes.remove(this.attribute);
+                Field field = DataTuple.class.getDeclaredField(this.attribute);
+
+                if (this.attribute.contains("Edible")) {
+                    LinkedList<DataTuple> subset = Utils.createSubset(data, field, "true");
+                    if (subset.size() > 0) {
+                        childNodes.put("true", new Node(subset, attributes));
+                    } else {
+                        childNodes.put("true", new Node(Utils.findMajorityClass(data)));
+                    }
+
+                    subset = Utils.createSubset(data, field, "false");
+                    if (subset.size() > 0) {
+                        childNodes.put("false", new Node(Utils.createSubset(data, field, "false"), attributes));
+                    } else {
+                        childNodes.put("false", new Node(Utils.findMajorityClass(data)));
+                    }
+                } else if (this.attribute.contains("Dist")) {
+                    DataTuple.DiscreteTag tags[] = DataTuple.DiscreteTag.values();
+
+                    for (DataTuple.DiscreteTag tag : tags) {
+                        LinkedList<DataTuple> subset = Utils.createSubset(data, field, tag.toString());
+                        if (subset.size() > 0) {
+                            childNodes.put(tag.toString(), new Node(subset, attributes));
+                        } else {
+                            childNodes.put(tag.toString(), new Node(Utils.findMajorityClass(data)));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public void addChildNode(String value, Node childNode) {
-        childNodes.put(value, childNode);
+    public Node(Constants.MOVE move) {
+        this.isLeafNode = true;
+        this.move = move;
     }
 
     public Constants.MOVE getDecision(Game game) {
         Constants.MOVE returnMove;
-        if(isLeafNode) returnMove = move;
-        else if(attribute.equals("isBlinkyEdible")){
+        if (isLeafNode) returnMove = move;
+        else if (attribute.equals("isBlinkyEdible")) {
             returnMove = childNodes.get(
                     String.valueOf(
                             game.isGhostEdible(Constants.GHOST.BLINKY)
                     )
             ).getDecision(game);
-        } else if (attribute.equals("isInkyEdible")){
+        } else if (attribute.equals("isInkyEdible")) {
             returnMove = childNodes.get(
                     String.valueOf(
                             game.isGhostEdible(Constants.GHOST.INKY)
                     )
             ).getDecision(game);
-        } else if (attribute.equals("isPinkyEdible")){
+        } else if (attribute.equals("isPinkyEdible")) {
             returnMove = childNodes.get(
                     String.valueOf(
                             game.isGhostEdible(Constants.GHOST.PINKY)
                     )
             ).getDecision(game);
-        } else if (attribute.equals("isSueEdible")){
+        } else if (attribute.equals("isSueEdible")) {
             returnMove = childNodes.get(
                     String.valueOf(
                             game.isGhostEdible(Constants.GHOST.SUE)
                     )
             ).getDecision(game);
-        } else if (attribute.equals("blinkyDist")){
+        } else if (attribute.equals("blinkyDist")) {
             returnMove = childNodes.get(
-                    getDiscreteTag(Constants.GHOST.BLINKY, game)
+                    Utils.getDistanceDiscreteTag(Constants.GHOST.BLINKY, game)
             ).getDecision(game);
-        } else if (attribute.equals("inkyDist")){
+        } else if (attribute.equals("inkyDist")) {
             returnMove = childNodes.get(
-                    getDiscreteTag(Constants.GHOST.INKY, game)
+                    Utils.getDistanceDiscreteTag(Constants.GHOST.INKY, game)
             ).getDecision(game);
-        } else if (attribute.equals("pinkyDist")){
+        } else if (attribute.equals("pinkyDist")) {
             returnMove = childNodes.get(
-                    getDiscreteTag(Constants.GHOST.PINKY, game)
+                    Utils.getDistanceDiscreteTag(Constants.GHOST.PINKY, game)
             ).getDecision(game);
-        } else if (attribute.equals("sueDist")){
+        } else if (attribute.equals("sueDist")) {
             returnMove = childNodes.get(
-                    getDiscreteTag(Constants.GHOST.SUE, game)
+                    Utils.getDistanceDiscreteTag(Constants.GHOST.SUE, game)
             ).getDecision(game);
-        }
-        else {
+        } else {
             System.out.println("No decision was found at attribute: " + attribute +
                     ", number of child nodes: " + childNodes.size());
             returnMove = this.move;
@@ -76,25 +122,19 @@ public class Node {
         return returnMove;
     }
 
-    public void setLeafNode(Constants.MOVE move) {
-        this.move = move;
-        this.isLeafNode = true;
-    }
-
-    private String getDiscreteTag(Constants.GHOST ghost, Game game){
-        int shortestDistance = game.getShortestPathDistance(
-                game.getPacmanCurrentNodeIndex(),
-                game.getGhostCurrentNodeIndex(ghost));
-
-        if (shortestDistance == -1){
-            return DataTuple.DiscreteTag.NONE.toString();
-        } else {
-            return DataTuple.DiscreteTag.DiscretizeDouble(
-                    (double)game.getShortestPathDistance(
-                            game.getPacmanCurrentNodeIndex(),
-                            game.getGhostCurrentNodeIndex(ghost)
-                    ) / 150d
-            ).toString();
+    public void print(int depth) {
+        for (int i = 0; i < depth; i++) {
+            System.out.print("  ");
         }
+        if(isLeafNode) {
+            System.out.println("Return " + move.toString());
+        } else {
+            for (Map.Entry<String, Node> entry : childNodes.entrySet()) {
+                System.out.println("If " + attribute + " == " + entry.getKey() + ":");
+                entry.getValue().print(depth + 1);
+            }
+
+        }
+
     }
 }
