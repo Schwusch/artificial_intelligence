@@ -4,7 +4,6 @@ import dataRecording.DataTuple;
 import pacman.game.Constants;
 
 import java.lang.reflect.Field;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
