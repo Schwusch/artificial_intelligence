@@ -19,6 +19,7 @@ public class Node {
     private Constants.MOVE move = Constants.MOVE.NEUTRAL;
 
     public Node(LinkedList<DataTuple> data, LinkedList<String> attributes) {
+
         if (data.size() > 0 && Utils.checkifSetHasSameClass(data)) {
             this.move = data.getFirst().DirectionChosen;
             this.isLeafNode = true;

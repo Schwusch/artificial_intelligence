@@ -91,7 +91,4 @@
 *.blg
 *.toc
 
-## pacman specific stuff
-**/trainingData.txt
-
 **/bin
