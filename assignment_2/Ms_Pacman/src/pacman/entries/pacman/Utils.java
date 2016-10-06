@@ -9,7 +9,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
- * Created by schwusch on 2016-10-04.
+ * Created by Jonathan Böcker on 2016-10-04.
+ *
+ *
  */
 public class Utils {
 
@@ -54,7 +56,7 @@ public class Utils {
                 if (attribute.getName().contains("Edible") && attribute.get(tuple).toString().equals(value)) {
                     subset.add(tuple);
                 } else if (attribute.getName().contains("Dist") &&
-                        tuple.discretizeDistance(
+                        Utils.discretizeDistance(
                                 (Integer) attribute.get(tuple)).toString().equals(value)) {
                     subset.add(tuple);
                 } else if (attribute.getName().contains("Dir") &&
@@ -70,20 +72,29 @@ public class Utils {
         return subset;
     }
 
-    static String getDistanceDiscreteTag(Constants.GHOST ghost, Game game) {
-        int shortestDistance = game.getShortestPathDistance(
-                game.getPacmanCurrentNodeIndex(),
-                game.getGhostCurrentNodeIndex(ghost));
+    static Utils.DiscreteTag discretizeDistance(int dist) {
+        double aux = dist / (double) 150;
+        return Utils.DiscreteTag.DiscretizeDouble(aux);
+    }
 
-        if (shortestDistance == -1) {
-            return DataTuple.DiscreteTag.NONE.toString();
-        } else {
-            return DataTuple.DiscreteTag.DiscretizeDouble(
+    static String getDistanceDiscreteTag(Constants.GHOST ghost, Game game) {
+            return Utils.DiscreteTag.DiscretizeDouble(
                     (double) game.getShortestPathDistance(
                             game.getPacmanCurrentNodeIndex(),
                             game.getGhostCurrentNodeIndex(ghost)
                     ) / 150d
             ).toString();
+
+    }
+
+    public enum DiscreteTag {
+        LOW, HIGH;
+
+        public static Utils.DiscreteTag DiscretizeDouble(double aux) {
+            if (aux > 0 && aux <= 0.2)
+                return Utils.DiscreteTag.LOW;
+            else
+                return Utils.DiscreteTag.HIGH;
         }
     }
 }
