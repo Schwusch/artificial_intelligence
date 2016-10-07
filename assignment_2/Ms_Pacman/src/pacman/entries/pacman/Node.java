@@ -35,18 +35,15 @@ public class Node {
                 Field field = DataTuple.class.getDeclaredField(this.attribute);
 
                 if (this.attribute.contains("Edible")) {
-                    LinkedList<DataTuple> subset = Utils.createSubset(data, field, "true");
-                    if (subset.size() > 0) {
-                        childNodes.put("true", new Node(subset, (LinkedList<String>) attributes.clone()));
-                    } else {
-                        childNodes.put("true", new Node(Utils.findMajorityClass(data)));
-                    }
+                    String values[] = {"true", "false"};
 
-                    subset = Utils.createSubset(data, field, "false");
-                    if (subset.size() > 0) {
-                        childNodes.put("false", new Node(Utils.createSubset(data, field, "false"), (LinkedList<String>) attributes.clone()));
-                    } else {
-                        childNodes.put("false", new Node(Utils.findMajorityClass(data)));
+                    for (String value : values) {
+                        LinkedList<DataTuple> subset = Utils.createSubset(data, field, value);
+                        if (subset.size() > 0) {
+                            childNodes.put(value, new Node(subset, (LinkedList<String>) attributes.clone()));
+                        } else {
+                            childNodes.put(value, new Node(Utils.findMajorityClass(data)));
+                        }
                     }
                 } else if (this.attribute.contains("Dist")) {
                     Utils.DiscreteTag tags[] = Utils.DiscreteTag.values();
