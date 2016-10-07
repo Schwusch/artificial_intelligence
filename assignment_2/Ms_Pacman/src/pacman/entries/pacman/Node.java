@@ -82,75 +82,35 @@ public class Node {
         this.move = move;
     }
 
-    public Constants.MOVE getDecision(Game game) {
-        Constants.MOVE returnMove;
+    Constants.MOVE getDecision(DataTuple tuple) {
+        Field field;
+        Constants.MOVE returnMove = null;
         if (isLeafNode) returnMove = move;
-        else if (attribute.equals("isBlinkyEdible")) {
-            returnMove = childNodes.get(
-                    String.valueOf(
-                            game.isGhostEdible(Constants.GHOST.BLINKY)
-                    )
-            ).getDecision(game);
-        } else if (attribute.equals("isInkyEdible")) {
-            returnMove = childNodes.get(
-                    String.valueOf(
-                            game.isGhostEdible(Constants.GHOST.INKY)
-                    )
-            ).getDecision(game);
-        } else if (attribute.equals("isPinkyEdible")) {
-            returnMove = childNodes.get(
-                    String.valueOf(
-                            game.isGhostEdible(Constants.GHOST.PINKY)
-                    )
-            ).getDecision(game);
-        } else if (attribute.equals("isSueEdible")) {
-            returnMove = childNodes.get(
-                    String.valueOf(
-                            game.isGhostEdible(Constants.GHOST.SUE)
-                    )
-            ).getDecision(game);
-        } else if (attribute.equals("blinkyDist")) {
-            returnMove = childNodes.get(
-                    Utils.getDistanceDiscreteTag(Constants.GHOST.BLINKY, game)
-            ).getDecision(game);
-        } else if (attribute.equals("inkyDist")) {
-            returnMove = childNodes.get(
-                    Utils.getDistanceDiscreteTag(Constants.GHOST.INKY, game)
-            ).getDecision(game);
-        } else if (attribute.equals("pinkyDist")) {
-            returnMove = childNodes.get(
-                    Utils.getDistanceDiscreteTag(Constants.GHOST.PINKY, game)
-            ).getDecision(game);
-        } else if (attribute.equals("sueDist")) {
-            returnMove = childNodes.get(
-                    Utils.getDistanceDiscreteTag(Constants.GHOST.SUE, game)
-            ).getDecision(game);
-        } else if (attribute.equals("blinkyDir")) {
-            returnMove = childNodes.get(
-                    game.getGhostLastMoveMade(Constants.GHOST.BLINKY).toString()
-            ).getDecision(game);
-        } else if (attribute.equals("inkyDir")) {
-            returnMove = childNodes.get(
-                    game.getGhostLastMoveMade(Constants.GHOST.INKY).toString()
-            ).getDecision(game);
-        } else if (attribute.equals("pinkyDir")) {
-            returnMove = childNodes.get(
-                    game.getGhostLastMoveMade(Constants.GHOST.PINKY).toString()
-            ).getDecision(game);
-        } else if (attribute.equals("sueDir")) {
-            returnMove = childNodes.get(
-                    game.getGhostLastMoveMade(Constants.GHOST.SUE).toString()
-            ).getDecision(game);
-        } else {
-            System.out.println("No decision was found at attribute: " + attribute +
-                    ", number of child nodes: " + childNodes.size());
-            returnMove = this.move;
-        }
+        else {
+            try {
+                field = DataTuple.class.getDeclaredField(this.attribute);
 
+                if (this.attribute.contains("Edible") || this.attribute.contains("Dir")) {
+                    returnMove = childNodes.get(
+                            field.get(tuple).toString()
+                    ).getDecision(tuple);
+                } else if (this.attribute.contains("Dist")) {
+                    returnMove = childNodes.get(
+                            Utils.discretizeDistance((Integer) field.get(tuple)).toString()
+                    ).getDecision(tuple);
+                } else {
+                    System.out.println("No decision was found at attribute: " + attribute +
+                            ", number of child nodes: " + childNodes.size());
+                    returnMove = this.move;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return returnMove;
     }
 
-    public void print(int depth) {
+    void print(int depth) {
         if (isLeafNode) {
             for (int i = 0; i < depth; i++) {
                 System.out.print((char) 0x21A7 + " ");

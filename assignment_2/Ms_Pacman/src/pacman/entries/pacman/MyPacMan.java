@@ -44,6 +44,6 @@ public class MyPacMan extends Controller<MOVE>
 	public MOVE getMove(Game game, long timeDue) 
 	{
 		//Place your game logic here to play the game as Ms Pac-Man
-		return rootNode.getDecision(game);
+		return rootNode.getDecision(new DataTuple(game, MOVE.NEUTRAL));
 	}
 }
