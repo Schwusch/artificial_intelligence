@@ -76,9 +76,9 @@
 *.iml
 
 ##Eclipse be gone
-**/.classpath
-**/.project
-**/.settings
+#**/.classpath
+#**/.project
+#**/.settings
 
 ##Latex output files
 *.aux
