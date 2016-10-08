@@ -38,12 +38,12 @@ public class MyPacMan extends Controller<MOVE>
         attributes.add("pinkyDir");
         attributes.add("sueDir");
 		this.rootNode = new Node(dataList, attributes);
-		this.rootNode.print(0);
+		this.rootNode.print();
 	}
 
 	public MOVE getMove(Game game, long timeDue) 
 	{
-		//Place your game logic here to play the game as Ms Pac-Man
+		// Advanced game logic below
 		return rootNode.getDecision(new DataTuple(game, MOVE.NEUTRAL));
 	}
 }

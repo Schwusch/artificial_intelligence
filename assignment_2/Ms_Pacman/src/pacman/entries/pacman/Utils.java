@@ -87,6 +87,32 @@ public class Utils {
 
     }
 
+    static String[] getAttributeVariations(String attribute) {
+        String array[];
+        if (attribute.contains("Edible")) {
+            array = new String[]{"true", "false"};
+
+        } else if (attribute.contains("Dist")) {
+            Utils.DiscreteTag tags[] = Utils.DiscreteTag.values();
+            array = new String[tags.length];
+            for (int i = 0; i < tags.length; i++) {
+                array[i] = tags[i].toString();
+            }
+
+        }  else if (attribute.contains("Dir")) {
+            Constants.MOVE moves[] = Constants.MOVE.values();
+            array = new String[moves.length];
+            for (int i = 0; i < moves.length; i++) {
+                array[i] = moves[i].toString();
+            }
+
+        } else {
+            array = new String[0];
+        }
+
+        return array;
+    }
+
     public enum DiscreteTag {
         LOW, HIGH;
 
