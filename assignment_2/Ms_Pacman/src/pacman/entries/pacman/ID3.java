@@ -28,27 +28,11 @@ public class ID3 {
             } catch (NoSuchFieldException e) {
                 e.printStackTrace();
             }
-            LinkedList<DataTuple> subset = null;
+            LinkedList<DataTuple> subset;
 
-            if (attr.contains("Edible")) {
-                String arr[] = {"true", "false"};
-                for (String value : arr) {
-                    subset = Utils.createSubset(dataList, field, value);
-                    infoAD += ((double) subset.size() / (double) dataList.size()) * calculateInfoD(subset);
-                }
-
-            } else if (attr.contains("Dist")) {
-                DataTuple.DiscreteTag tags[] = DataTuple.DiscreteTag.values();
-                for (DataTuple.DiscreteTag tag : tags) {
-                    subset = Utils.createSubset(dataList, field, tag.toString());
-                    infoAD += ((double) subset.size() / (double) dataList.size()) * calculateInfoD(subset);
-                }
-            } else if (attr.contains("Dir")) {
-                Constants.MOVE moves[] = Constants.MOVE.values();
-                for (Constants.MOVE move: moves) {
-                    subset = Utils.createSubset(dataList, field, move.toString());
-                    infoAD += ((double) subset.size() / (double) dataList.size()) * calculateInfoD(subset);
-                }
+            for (String value : Utils.getAttributeVariations(attr)) {
+                subset = Utils.createSubset(dataList, field, value);
+                infoAD += ((double) subset.size() / (double) dataList.size()) * calculateInfoD(subset);
             }
 
             double gain = infoD - infoAD;

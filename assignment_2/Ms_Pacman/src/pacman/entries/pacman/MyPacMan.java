@@ -39,11 +39,23 @@ public class MyPacMan extends Controller<MOVE>
         attributes.add("sueDir");
 		this.rootNode = new Node(dataList, attributes);
 		this.rootNode.print();
+		verifyData(dataList);
 	}
 
 	public MOVE getMove(Game game, long timeDue) 
 	{
 		// Advanced game logic below
 		return rootNode.getDecision(new DataTuple(game, MOVE.NEUTRAL));
+	}
+
+	private void verifyData(LinkedList<DataTuple> dataList) {
+		int correctGuesses = 0;
+
+		for (DataTuple tuple : dataList) {
+			if (tuple.DirectionChosen.equals(this.rootNode.getDecision(tuple))) {
+				correctGuesses++;
+			}
+		}
+		System.out.println("\nClassifier accuracy: " + correctGuesses / (double)dataList.size());
 	}
 }
