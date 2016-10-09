@@ -53,13 +53,11 @@ public class Utils {
 
         for (DataTuple tuple : data) {
             try {
-                if (attribute.getName().contains("Edible") && attribute.get(tuple).toString().equals(value)) {
-                    subset.add(tuple);
-                } else if (attribute.getName().contains("Dist") &&
+                if (attribute.getName().contains("Dist") &&
                         Utils.discretizeDistance(
                                 (Integer) attribute.get(tuple)).toString().equals(value)) {
                     subset.add(tuple);
-                } else if (attribute.getName().contains("Dir") &&
+                } else if (!attribute.getName().contains("Dist") &&
                         attribute.get(tuple).toString().equals(value)) {
                     subset.add(tuple);
                 }

@@ -22,6 +22,8 @@ public class ID3 {
 
         for (String attr : attributes) {
             double infoAD = 0;
+            double splitInfoAD = 0;
+
             Field field = null;
             try {
                 field = DataTuple.class.getDeclaredField(attr);
@@ -33,10 +35,19 @@ public class ID3 {
             for (String value : Utils.getAttributeVariations(attr)) {
                 subset = Utils.createSubset(dataList, field, value);
                 infoAD += ((double) subset.size() / (double) dataList.size()) * calculateInfoD(subset);
+                if(subset.size() > 0) {
+                    splitInfoAD += -((double) subset.size() / (double) dataList.size()) *
+                            (Math.log((double) subset.size() / (double) dataList.size()) / (double) Math.log(2));
+                }
             }
 
-            double gain = infoD - infoAD;
-            gains.put(attr, gain);
+            double gainA = infoD - infoAD;
+            double gainRatio = 0;
+            if(splitInfoAD > 0)
+                gainRatio = gainA / splitInfoAD;
+            else
+                System.out.println("GainRatio is zero for " + attr);
+            gains.put(attr, gainRatio);
         }
 
         double maxValueInMap = -Double.MAX_VALUE;
