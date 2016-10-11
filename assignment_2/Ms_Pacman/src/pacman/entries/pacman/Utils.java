@@ -10,22 +10,33 @@ import java.util.LinkedList;
 
 /**
  * Created by Jonathan Böcker on 2016-10-04.
- *
+ * A class containing utility functions for the other classes to use.
  *
  */
-public class Utils {
-
+public class Utils { 
+	
+	/**
+	 * Checks if the tuples has the same class by comparing the tuples with the first chosen direction.
+	 * @param data The data to be compared 
+	 * @return TRUE/FALSE depending on the outcome 
+	 */
     static boolean checkifSetHasSameClass(LinkedList<DataTuple> data) {
         Constants.MOVE firstTupleMove = data.getFirst().DirectionChosen;
         for(DataTuple tuple : data) {
             if (!tuple.DirectionChosen.equals(firstTupleMove)){
+            	System.out.println(firstTupleMove);
                 return false;
             }
         }
 
         return true;
     }
-
+    
+    /**
+     * Iterates through a list of tuples and finds the move that is most recurring.
+     * @param data A list with tuples
+     * @return The most recurring move
+     */
     static Constants.MOVE findMajorityClass(LinkedList<DataTuple> data) {
         // Will hold the number of occurrences of each classifier class in the set
         HashMap<Constants.MOVE, Integer> tuplePerClass = new HashMap<>();
@@ -47,12 +58,21 @@ public class Utils {
 
         return majorityMove;
     }
-
+    
+    /**
+     * Creates a subset of a recieved list of tuples by comparing the attributes of the 
+     * tuples with a key(value)
+     * @param data List of tuples
+     * @param attribute Attribute of the tuples
+     * @param value The value to compare the attributes to
+     * @return The subset
+     */
     static LinkedList<DataTuple> createSubset(LinkedList<DataTuple> data, Field attribute, String value) {
         LinkedList<DataTuple> subset = new LinkedList<>();
 
         for (DataTuple tuple : data) {
             try {
+            	//If the attribute is distance the value needs to be discretized
                 if (attribute.getName().contains("Dist") &&
                         Utils.discretizeDistance(
                                 (Integer) attribute.get(tuple)).toString().equals(value)) {
@@ -69,12 +89,20 @@ public class Utils {
 
         return subset;
     }
-
+    /**
+     * Discretizes a distance 
+     * @param dist The distance to be discretized
+     * @return LOW if the discretized distance is > 0 and <= 0.2. 
+     * Otherwise HIGH
+     */
     static Utils.DiscreteTag discretizeDistance(int dist) {
-        double aux = dist / (double) 150;
-        return Utils.DiscreteTag.DiscretizeDouble(aux);
+    	double aux = dist / (double) 150;
+    	return Utils.DiscreteTag.DiscretizeDouble(aux);
     }
-
+    
+    /*
+     * Returns the discretized value of the shortest distance between Ms Pacman and a ghost
+     */
     static String getDistanceDiscreteTag(Constants.GHOST ghost, Game game) {
             return Utils.DiscreteTag.DiscretizeDouble(
                     (double) game.getShortestPathDistance(
@@ -84,13 +112,20 @@ public class Utils {
             ).toString();
 
     }
-
+    /**
+     * The method returns an array with the different variations depending on
+     * the attribute (Edible, Distance, Direction) it gets. 
+     * @param attribute The attribute whose variation should be returned
+     * @return Array with the different variations
+     */
     static String[] getAttributeVariations(String attribute) {
         String array[];
         if (attribute.contains("Edible")) {
+        	//Edible, either true or false
             array = new String[]{"true", "false"};
 
         } else if (attribute.contains("Dist")) {
+        	//Distance, two different variations, HIGH or LOW
             Utils.DiscreteTag tags[] = Utils.DiscreteTag.values();
             array = new String[tags.length];
             for (int i = 0; i < tags.length; i++) {
@@ -98,6 +133,7 @@ public class Utils {
             }
 
         }  else if (attribute.contains("Dir")) {
+        	//Direction could be UP, DOWN, RIGHT, LEFT, NETUTRAL
             Constants.MOVE moves[] = Constants.MOVE.values();
             array = new String[moves.length];
             for (int i = 0; i < moves.length; i++) {
@@ -113,7 +149,12 @@ public class Utils {
 
     public enum DiscreteTag {
         LOW, HIGH;
-
+        
+        /**
+         * The method returns LOW or HIGH depending on the double it recieves
+         * @param aux 
+         * @return HIGH/LOW
+         */
         public static Utils.DiscreteTag DiscretizeDouble(double aux) {
             if (aux > 0 && aux <= 0.2)
                 return Utils.DiscreteTag.LOW;
