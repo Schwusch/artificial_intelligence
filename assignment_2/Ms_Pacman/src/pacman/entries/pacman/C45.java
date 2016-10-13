@@ -62,10 +62,10 @@ public class C45 {
 
     private static double calculateInfoD(LinkedList<DataTuple> dataTuples) {
         // Will hold the number of occurrences of each classifier class in the set
-        HashMap<Constants.MOVE, Integer> tuplePerClass = new HashMap<>();
+        HashMap<Constants.MOVE, Double> tuplePerClass = new HashMap<>();
         // Insert an Integer for each classifier class
         for (Constants.MOVE move : Constants.MOVE.values()) {
-            tuplePerClass.put(move, 0);
+            tuplePerClass.put(move, 0.0);
         }
 
         // Increase every find by one in the map
@@ -74,15 +74,14 @@ public class C45 {
         }
 
         // Calculate the entropy of the data set
-        int dataSize = dataTuples.size();
+        double dataSize = (double) dataTuples.size();
         double infoD = 0;
 
-
         for (Constants.MOVE move : Constants.MOVE.values()) {
-            double count = (double) tuplePerClass.get(move);
+            double count = tuplePerClass.get(move);
             if (count > 0) {
-                infoD += -((double) count / (double) dataSize) *
-                        (Math.log((double) count / (double) dataSize) / (double) Math.log(2));
+                infoD += -(count / dataSize) *
+                        (Math.log(count / dataSize) / Math.log(2));
             }
         }
         return infoD;
