@@ -36,7 +36,7 @@ public class Node {
         } else {
             try {
                 // Get the most relevant attribute for this node
-                this.attribute = ID3.selectAttribute(data, attributes);
+                this.attribute = C45.selectAttribute(data, attributes);
                 attributes.remove(this.attribute);
                 // With reflection, get the corresponding Field for the chosen attribute
                 Field field = DataTuple.class.getDeclaredField(this.attribute);

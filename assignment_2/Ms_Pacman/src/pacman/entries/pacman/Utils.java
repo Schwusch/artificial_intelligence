@@ -89,6 +89,7 @@ public class Utils {
 
         return subset;
     }
+
     /**
      * Discretizes a distance 
      * @param dist The distance to be discretized
@@ -99,19 +100,7 @@ public class Utils {
     	double aux = dist / (double) 150;
     	return Utils.DiscreteTag.DiscretizeDouble(aux);
     }
-    
-    /*
-     * Returns the discretized value of the shortest distance between Ms Pacman and a ghost
-     */
-    static String getDistanceDiscreteTag(Constants.GHOST ghost, Game game) {
-            return Utils.DiscreteTag.DiscretizeDouble(
-                    (double) game.getShortestPathDistance(
-                            game.getPacmanCurrentNodeIndex(),
-                            game.getGhostCurrentNodeIndex(ghost)
-                    ) / 150d
-            ).toString();
 
-    }
     /**
      * The method returns an array with the different variations depending on
      * the attribute (Edible, Distance, Direction) it gets. 

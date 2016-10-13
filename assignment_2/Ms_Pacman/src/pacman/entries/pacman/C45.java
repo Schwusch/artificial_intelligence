@@ -11,9 +11,9 @@ import java.util.Map;
 /**
  * Created by Jonathan Böcker on 2016-09-27.
  * <p>
- * Implementation of the ID3 algorithm for the Pacman assignment
+ * Implementation of the C45 algorithm for the Pacman assignment
  */
-public class ID3 {
+public class C45 {
 
     public static String selectAttribute(LinkedList<DataTuple> dataList, LinkedList<String> attributes) {
         double infoD = calculateInfoD(dataList);
