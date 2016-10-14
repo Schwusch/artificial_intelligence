@@ -70,7 +70,7 @@ public class MyPacMan extends Controller<MOVE>
 				correctGuesses++;
 			}
 		}
-		System.out.println("\nClassifier accuracy: " + correctGuesses / (double)dataList.size());
+		System.out.println("\n>> Classifier accuracy: " + correctGuesses / (double)dataList.size());
 	}
 
 	private void saveTree(String filePathString) {
@@ -79,7 +79,7 @@ public class MyPacMan extends Controller<MOVE>
 			ObjectOutputStream oos = new ObjectOutputStream(fout);
 			oos.writeObject(this.rootNode);
 			oos.close();
-			System.out.println("Saved Tree.");
+			System.out.println(">> Saved Tree.");
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -91,7 +91,7 @@ public class MyPacMan extends Controller<MOVE>
 			ObjectInputStream ois = new ObjectInputStream(fin);
 			this.rootNode = (Node)ois.readObject();
 			ois.close();
-			System.out.println("Loaded Tree");
+			System.out.println(">> Loaded Tree");
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

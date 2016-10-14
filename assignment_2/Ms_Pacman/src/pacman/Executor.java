@@ -89,7 +89,7 @@ public class Executor
 		//exec.runGameTimed(new DataCollectorController(new KeyBoardInput()),new StarterGhosts(),visual);
 
 		// Run my super AI
-		exec.runGameTimed(new MyPacMan(), new StarterGhosts(),visual);
+		exec.runGameTimed(new MyPacMan(), new AggressiveGhosts(),visual);
 	}
 	
     /**
