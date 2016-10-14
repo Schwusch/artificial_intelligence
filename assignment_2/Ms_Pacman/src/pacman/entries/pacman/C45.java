@@ -15,7 +15,9 @@ import java.util.Map;
  */
 public class C45 {
 
-    public static String selectAttribute(LinkedList<DataTuple> dataList, LinkedList<String> attributes) {
+    public static String selectAttribute(
+            LinkedList<DataTuple> dataList,
+            LinkedList<String> attributes) {
         double infoD = calculateInfoD(dataList);
         String maxKeyInMap = null;
         HashMap<String, Double> gains = new HashMap<>();
