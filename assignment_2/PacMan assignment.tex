@@ -46,9 +46,9 @@
 
 \section{Introduction}
 In this assignment the objective was to implement an AI controller for Ms. Pacman that is capable of learning from data extracted from previous (human) gameplays. The controller had to be a decision tree
-trained by means of a ID3 algorithm\citep{russel2010artifical}. We chose to extend the attribute selection algorithm to C4.5, since it is such a small extension of ID3.
+trained by means of a ID3 algorithm\citep{russel2010artifical}. We chose to extend the attribute selection algorithm to C4.5\citep{russel2010artifical}, since it is such a small extension of ID3.
 
-\iffalse
+\iffalse  % ------------TVEK-------------------
 \begin{itemize}
     \item What input parameters have you used as the input of the decision tree and why?
     \item Why have you discouraged the others?
@@ -57,16 +57,16 @@ trained by means of a ID3 algorithm\citep{russel2010artifical}. We chose to exte
     \item What experiences have you acquired?
 \end{itemize}
 
-% TVEK
 \section{Ms. Pac-Man}
 Ms. Pac-Man is a arcade video game released in the late 1980s. The game is not to be confused with the original Pac-Man game though the gameplay is very similar. It is one of the most popular arcade game of all time and also one of the most successful, selling over 115,000 arcade cabinets.  \citep{mspacmanwiki}
 
     \subsection{Gameplay}
     The objective is to earn points by eating pills and at the same time avoid the four ghosts that are circling the playing field. It is also possible to eat a larger pill in order to make the ghosts edible and scoring points by eating them. If a ghost, that is not edible, collides with Ms. Pac-Man a life is lost. The game ends when all three lives are lost or when all the levels are completed. To complete a level Ms. Pac-Man must eat all the pills on the playing field.
-% END TVEK
 
-\fi
+
+\fi % ------------------END TVEK----------------------
 \section{Input parameters}
+\iffalse  % ------------TVEK-------------------
 The Ms. Pac-Man implementation that we were given contained some parameters to choose from. For example there are four ghosts on the playing field. Each of the ghosts has attributes like:
 
 \begin{itemize}
@@ -88,6 +88,7 @@ Other parameters that is not concerning the ghosts but still can be used are:
     \item Ms. Pac-Mans position
     \item Last chosen direction
 \end{itemize}
+\fi % ------------------END TVEK----------------------
 
     \subsection{Chosen parameters}
     Our general approach when choosing parameters for the learning algorithm was to look at a human when learning to play Ms. Pac-Man. A human player might look at the state of the ghosts, are they edible, close and moving towards Ms. Pac-Man? Based on those criteria the player might have enough information to evade the ghosts and survive a little longer. Our philosophy was to use as little information as possible to solve the task, to avoid overfitting.
@@ -112,17 +113,14 @@ The learning algorithms main purpose is to create a decision tree that is able t
 
     Our class \verb|C45| has only one method visible to outside classes (Listing \ref{attribute}), and one private method (Listing \ref{infod}).
 
-    \vspace{1cm}
     \SaveVerb{term}|C45.selectAttribute()|
-    \begin{lstlisting}[language=Java, caption=Method definition of \protect\UseVerb{term}, label={attribute}, escapechar=|]
+    \begin{lstlisting}[language=Java, caption=Method declaration of \protect\UseVerb{term}, label={attribute}, escapechar=|]
 public static String selectAttribute(
             LinkedList<DataTuple> dataList,
             LinkedList<String> attributes) {
     |\dots|
 }
     \end{lstlisting}
-
-    \newpage
 
     \SaveVerb{term2}|C45.calculateInfoD()|
     \begin{lstlisting}[language=Java, caption=Method definition of \protect\UseVerb{term2}, label={infod}, escapechar=|]
@@ -173,8 +171,6 @@ private static double calculateInfoD(LinkedList<DataTuple> dataTuples) {
     SplitInfo_A (D)=-\sum_{j=1}^{v}\frac{|D_j|}{|D|} \times log_2\bigg( \frac{|D_j|}{|D|}\bigg)
     \end{equation}
 
-    \newpage
-
     In code, these are implemented as follows in listing \ref{excerptSelect}:
 
     \begin{lstlisting}[language=Java, caption=Excerpt from \protect\UseVerb{term}, label={excerptSelect}, escapechar=|]
@@ -202,9 +198,15 @@ for (String attr : attributes) { |\label{forEveryAttr}|
     First $Info(D)$ on the whole dataset is calculated (Listing \ref{excerptSelect}, line \ref{infoDCalc}), then for every attribute (Listing \ref{excerptSelect}, line \ref{forEveryAttr}) $Info_A (D)$ (Listing \ref{excerptSelect}, line \ref{infoADCalcStart} - \ref{infoADCalcEnd}) and $SplitInfo_A (D)$ (Listing \ref{excerptSelect}, line \ref{splitInfoADStart} - \ref{splitInfoADEnd}) is calculated. $SplitInfo_A (D)$ can only be calculated if the subset ($|D_j|$) is larger than zero, because $log_2 (0)$ is undefined.
     $Gain(A)$ is then calculated (Listing \ref{excerptSelect}, line \ref{gainACalc}) and $GainRatio(A)$ is calculated if $SplitInfo_A (D)$ is greater than zero, otherwise it is set to the biggest possible value  (Listing \ref{excerptSelect}, line \ref{gainRatioStart} - \ref{gainRatioEnd}). This is of course because something cannot be divided by zero, but we assume \(\lim_{SplitInfo_A (D) \to 0}\) which means  \(\lim_{GainRatio(A) \to \infty}\).
     The algorithm then returns the attribute with the highest gain ratio.
+
+    \subsection{The Node class}
+    Här ska vi förklara nodklassen
+
 \section{Accuracy of the classifier}
+Inte så långt kapitel om hur vi mätte noggranheten på klassifieraren
 
 \section{Conclusions}
+Erfarenheter etc
 
 \bibliographystyle{plain}
 \bibliography{references}
