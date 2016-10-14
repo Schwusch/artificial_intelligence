@@ -21,9 +21,6 @@ public class C45 {
         HashMap<String, Double> gains = new HashMap<>();
 
         for (String attr : attributes) {
-            double infoAD = 0;
-            double splitInfoAD = 0;
-
             Field field = null;
             try {
                 field = DataTuple.class.getDeclaredField(attr);
@@ -31,7 +28,8 @@ public class C45 {
                 e.printStackTrace();
             }
             LinkedList<DataTuple> subset;
-
+            double infoAD = 0;
+            double splitInfoAD = 0;
             for (String value : Utils.getAttributeVariations(attr)) {
                 subset = Utils.createSubset(dataList, field, value);
                 infoAD += ((double) subset.size() / (double) dataList.size()) * calculateInfoD(subset);
@@ -42,11 +40,11 @@ public class C45 {
             }
 
             double gainA = infoD - infoAD;
-            double gainRatio = 0;
+            double gainRatio = Double.MAX_VALUE;
             if(splitInfoAD > 0)
                 gainRatio = gainA / splitInfoAD;
             else
-                System.out.println("GainRatio is zero for " + attr);
+                System.out.println("SplitInfoAD is zero for " + attr);
             gains.put(attr, gainRatio);
         }
 

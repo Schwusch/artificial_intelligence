@@ -22,7 +22,7 @@ public class Node {
      * Creates a decision tree until it has exhausted all possible paths down to the leaf nodes.
      * @param data Data to consider/learn from in the learning algorithm.
      * @param attributes Relevant attributes in the {@link DataTuple} class.
-     */
+      */
     public Node(LinkedList<DataTuple> data, LinkedList<String> attributes) {
         // If all tuples has the same class, this can be a leaf node
         if (data.size() > 0 && Utils.checkifSetHasSameClass(data)) {

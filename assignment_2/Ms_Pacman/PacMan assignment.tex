@@ -114,11 +114,11 @@ The learning algorithms main purpose is to create a decision tree that is able t
 
     \vspace{1cm}
     \SaveVerb{term}|C45.selectAttribute()|
-    \begin{lstlisting}[language=Java, caption=Method definition of \protect\UseVerb{term}, label={attribute}]
+    \begin{lstlisting}[language=Java, caption=Method definition of \protect\UseVerb{term}, label={attribute}, escapechar=|]
 public static String selectAttribute(
             LinkedList<DataTuple> dataList,
             LinkedList<String> attributes) {
-    ...
+    |\dots|
 }
     \end{lstlisting}
 
@@ -127,18 +127,13 @@ public static String selectAttribute(
     \SaveVerb{term2}|C45.calculateInfoD()|
     \begin{lstlisting}[language=Java, caption=Method definition of \protect\UseVerb{term2}, label={infod}, escapechar=|]
 private static double calculateInfoD(LinkedList<DataTuple> dataTuples) {
-    // Will hold the number of occurrences of each classifier class in the set
     HashMap<Constants.MOVE, Double> tuplePerClass = new HashMap<>(); |\label{tupleperclass}|
-    // Insert an Integer for each classifier class
-    for (Constants.MOVE move : Constants.MOVE.values()) {
-        tuplePerClass.put(move, 0.0);
-    }
+    |\dots|
     // Increase every find by one in the map
     for (DataTuple tuple : dataTuples) {
         tuplePerClass.put(tuple.DirectionChosen,
             tuplePerClass.get(tuple.DirectionChosen) + 1);
     }
-    // Calculate the entropy of the data set
     double dataSize = (double) dataTuples.size();
     double infoD = 0;
     for (Constants.MOVE move : Constants.MOVE.values()) { |\label{addingstart}|
@@ -149,8 +144,7 @@ private static double calculateInfoD(LinkedList<DataTuple> dataTuples) {
         }
     }
     return infoD;
-}
-    \end{lstlisting}
+}\end{lstlisting}
 
     Both are static and holds no state between method calls. The \verb|selectAttribute()| method simply returns the name of the most rewarding attribute in a string and the \verb|calculateInfoD()| method returns a \verb|double| value derived of equation \ref{infoD}.
     \begin{equation} \label{infoD}
@@ -163,15 +157,51 @@ private static double calculateInfoD(LinkedList<DataTuple> dataTuples) {
     \begin{equation} \label{GainA}
     Gain(A)=Info(D)-Info_A (D)
     \end{equation}
-
-    $Info_A (D)$ is explained in equation \ref{InfoAD}:
+    $Info_A (D)$ is explained by equation \ref{InfoAD}:
 
     \begin{equation} \label{InfoAD}
     Info_A (D)=\sum_{j=1}^{v}\frac{|D_j|}{|D|}\times Info(D_j)
     \end{equation}
+    $Gain(A)$ is then used for calulating the gain ratio according to equation \ref{GainRatio}:
 
+    \begin{equation} \label{GainRatio}
+    GainRatio(A)=\frac{Gain(A)}{SplitInfo_A (D)}
+    \end{equation}
+    $SplitInfo_A (D)$ is explained by equation \ref{SplitInfo}:
 
+    \begin{equation} \label{SplitInfo}
+    SplitInfo_A (D)=-\sum_{j=1}^{v}\frac{|D_j|}{|D|} \times log_2\bigg( \frac{|D_j|}{|D|}\bigg)
+    \end{equation}
 
+    \newpage
+
+    In code, these are implemented as follows in listing \ref{excerptSelect}:
+
+    \begin{lstlisting}[language=Java, caption=Excerpt from \protect\UseVerb{term}, label={excerptSelect}, escapechar=|]
+double infoD = calculateInfoD(dataList); |\label{infoDCalc}|
+|\dots|
+for (String attr : attributes) { |\label{forEveryAttr}|
+    |\dots|
+    for (String value : Utils.getAttributeVariations(attr)) {
+        subset = Utils.createSubset(dataList, field, value); |\label{infoADCalcStart}|
+        infoAD += ((double) subset.size() / (double) dataList.size()) *
+                                                    calculateInfoD(subset); |\label{infoADCalcEnd}|
+        if(subset.size() > 0) {                                             |\label{splitInfoADStart}|
+            splitInfoAD += -((double) subset.size() / (double) dataList.size()) *
+                    (Math.log((double) subset.size() / (double) dataList.size()) /
+                                                            (double) Math.log(2));
+        }                                                   |\label{splitInfoADEnd}|
+    }
+    double gainA = infoD - infoAD; |\label{gainACalc}|
+    double gainRatio = Double.MAX_VALUE;          |\label{gainRatioStart}|
+    if(splitInfoAD > 0)
+        gainRatio = gainA / splitInfoAD;    |\label{gainRatioEnd}|
+    |\dots|
+}
+|\dots|\end{lstlisting}
+    First $Info(D)$ on the whole dataset is calculated (Listing \ref{excerptSelect}, line \ref{infoDCalc}), then for every attribute (Listing \ref{excerptSelect}, line \ref{forEveryAttr}) $Info_A (D)$ (Listing \ref{excerptSelect}, line \ref{infoADCalcStart} - \ref{infoADCalcEnd}) and $SplitInfo_A (D)$ (Listing \ref{excerptSelect}, line \ref{splitInfoADStart} - \ref{splitInfoADEnd}) is calculated. $SplitInfo_A (D)$ can only be calculated if the subset ($|D_j|$) is larger than zero, because $log_2 (0)$ is undefined.
+    $Gain(A)$ is then calculated (Listing \ref{excerptSelect}, line \ref{gainACalc}) and $GainRatio(A)$ is calculated if $SplitInfo_A (D)$ is greater than zero, otherwise it is set to the biggest possible value  (Listing \ref{excerptSelect}, line \ref{gainRatioStart} - \ref{gainRatioEnd}). This is of course because something cannot be divided by zero, but we assume \(\lim_{SplitInfo_A (D) \to 0}\) which means  \(\lim_{GainRatio(A) \to \infty}\).
+    The algorithm then returns the attribute with the highest gain ratio.
 \section{Accuracy of the classifier}
 
 \section{Conclusions}
