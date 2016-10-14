@@ -40,10 +40,8 @@ public class Node {
                 attributes.remove(this.attribute);
                 // With reflection, get the corresponding Field for the chosen attribute
                 Field field = DataTuple.class.getDeclaredField(this.attribute);
-                // Get all discrete variations of the attribute
-                String values[] = Utils.getAttributeVariations(this.attribute);
                 // Create a child node for each variation
-                for (String value : values) {
+                for (String value : Utils.getAttributeVariations(this.attribute)) {
                     makeChildNode(data, attributes, value, field);
                 }
             } catch (Exception e) {
@@ -107,7 +105,7 @@ public class Node {
                                Field field){
         // Make a subset with the attribute incarnated as a certain value
         LinkedList<DataTuple> subset = Utils.createSubset(dataset, field, key);
-        // If there exists a subset, make a recurisve call
+        // If there exists a subset, make a recursive call
         if (subset.size() > 0) {
             childNodes.put(key, new Node(subset, (LinkedList<String>) attributes.clone()));
         // If there is no data with the value embodied in the attribute,
