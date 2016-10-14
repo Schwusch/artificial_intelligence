@@ -45,8 +45,6 @@ public class C45 {
             double gainRatio = Double.MAX_VALUE;
             if(splitInfoAD > 0)
                 gainRatio = gainA / splitInfoAD;
-            else
-                System.out.println("SplitInfoAD is zero for " + attr);
             gains.put(attr, gainRatio);
         }
 

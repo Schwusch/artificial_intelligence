@@ -24,7 +24,6 @@ public class Utils {
         Constants.MOVE firstTupleMove = data.getFirst().DirectionChosen;
         for(DataTuple tuple : data) {
             if (!tuple.DirectionChosen.equals(firstTupleMove)){
-            	System.out.println(firstTupleMove);
                 return false;
             }
         }

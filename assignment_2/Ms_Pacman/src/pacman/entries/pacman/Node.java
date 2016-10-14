@@ -120,29 +120,29 @@ public class Node {
      * Pretty rad.
      */
     void print() {
-        print(0);
+        print("");
     }
 
     /*
     Prints a formatted tree in the console.
      */
-    private void print(int depth) {
+    private void print(String indent) {
+        System.out.print(indent);
         if (isLeafNode) {
-            for (int i = 0; i < depth; i++) {
-                System.out.print((char) 0x21A7 + " ");
-            }
-            System.out.println("Return " + move.toString());
+            System.out.print("  └── Return " + move.toString());
         } else {
-            for (int i = 0; i < depth; i++) {
-                System.out.print((char) 0x21A7 + " ");
-            }
-            System.out.println("<" + attribute + ">");
-            for (Map.Entry<String, Node> entry : childNodes.entrySet()) {
-                for (int i = 0; i < depth; i++) {
-                    System.out.print((char) 0x21A7 + " ");
-                }
-                System.out.println((char) 0x27A5 + "If " + entry.getKey() + ":");
-                entry.getValue().print(depth + 1);
+            System.out.print("\"" + attribute + "\"");
+        }
+        System.out.println();
+        Map.Entry<String, Node>[] nodes = childNodes.entrySet().toArray(new Map.Entry[0]);
+        for(int i = 0; i < nodes.length; i++) {
+            System.out.print(indent);
+            if(i == nodes.length - 1){
+                System.out.println( "└── \"" + attribute + "\" = " + nodes[i].getKey() + ":");
+                nodes[i].getValue().print(indent +  "  ");
+            }else {
+                System.out.println( "├── \"" + attribute + "\" = " + nodes[i].getKey() + ":");
+                nodes[i].getValue().print(indent + "│ ");
             }
         }
     }
