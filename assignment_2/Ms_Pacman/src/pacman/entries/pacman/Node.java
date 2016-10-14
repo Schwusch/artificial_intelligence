@@ -120,6 +120,7 @@ public class Node {
      * Pretty rad.
      */
     void print() {
+        System.out.println("ROOT");
         print("");
     }
 
@@ -127,22 +128,20 @@ public class Node {
     Prints a formatted tree in the console.
      */
     private void print(String indent) {
-        System.out.print(indent);
         if (isLeafNode) {
+            System.out.print(indent);
             System.out.print("  └── Return " + move.toString());
-        } else {
-            System.out.print("\"" + attribute + "\"");
+            System.out.println();
         }
-        System.out.println();
         Map.Entry<String, Node>[] nodes = childNodes.entrySet().toArray(new Map.Entry[0]);
         for(int i = 0; i < nodes.length; i++) {
             System.out.print(indent);
             if(i == nodes.length - 1){
-                System.out.println( "└── \"" + attribute + "\" = " + nodes[i].getKey() + ":");
-                nodes[i].getValue().print(indent +  "  ");
+                System.out.println( "└ \"" + attribute + "\" = " + nodes[i].getKey() + ":");
+                nodes[i].getValue().print(indent +  "    ");
             }else {
-                System.out.println( "├── \"" + attribute + "\" = " + nodes[i].getKey() + ":");
-                nodes[i].getValue().print(indent + "│ ");
+                System.out.println( "├ \"" + attribute + "\" = " + nodes[i].getKey() + ":");
+                nodes[i].getValue().print(indent + "│   ");
             }
         }
     }
