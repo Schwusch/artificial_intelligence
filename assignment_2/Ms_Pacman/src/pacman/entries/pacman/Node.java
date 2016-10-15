@@ -3,6 +3,7 @@ package pacman.entries.pacman;
 import dataRecording.DataTuple;
 import pacman.game.Constants;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -12,7 +13,7 @@ import java.util.Map;
  * Created by Jonathan Böcker on 2016-10-01.
  * This is a class representing a node in a decision tree
  */
-public class Node {
+public class Node implements Serializable {
     private String attribute;
     private HashMap<String, Node> childNodes = new HashMap<>();
     private boolean isLeafNode = false;
@@ -128,19 +129,19 @@ public class Node {
     Prints a formatted tree in the console.
      */
     private void print(String indent) {
+
         if (isLeafNode) {
             System.out.print(indent);
-            System.out.print("  └── Return " + move.toString());
-            System.out.println();
+            System.out.println("  └─ Return " + move.toString());
         }
         Map.Entry<String, Node>[] nodes = childNodes.entrySet().toArray(new Map.Entry[0]);
         for(int i = 0; i < nodes.length; i++) {
             System.out.print(indent);
             if(i == nodes.length - 1){
-                System.out.println( "└ \"" + attribute + "\" = " + nodes[i].getKey() + ":");
+                System.out.println( "└─ \"" + attribute + "\" = " + nodes[i].getKey() + ":");
                 nodes[i].getValue().print(indent +  "    ");
             }else {
-                System.out.println( "├ \"" + attribute + "\" = " + nodes[i].getKey() + ":");
+                System.out.println( "├─ \"" + attribute + "\" = " + nodes[i].getKey() + ":");
                 nodes[i].getValue().print(indent + "│   ");
             }
         }
