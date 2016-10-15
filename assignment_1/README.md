@@ -20,7 +20,7 @@ class StateNode {
 }
 ```
 
--   The `gridState` variable is an integer matrix where values span from -1 to 1, where -1 represents a human player brick, 1 represents an AI brick and 0 represents an unoccupied space. This is an application wide representation the Othello board.
+-   The `gridState` variable is an integer matrix where values span from -1 to 1, where -1 represents a human player brick, 1 represents an AI brick and 0 represents an unoccupied space. This is an application wide representation of the Othello board.
 
 -   The `alpha` and `beta` variables are important to the pruning algorithm at every node to evaluate the need of searching further down in the current branch.
 
@@ -233,6 +233,31 @@ Below is a UML class diagram summary of the program:
 
 <img src="diagram.png" alt="A class diagram showing the class relationships of the program." />
 
+Discussion
+==========
+
+If I had done it all over again
+-------------------------------
+
+The application was highly unoptimized at the time this paper was written, and I would opt for a more object oriented approach when finding possible moves if I had to do the assignment again. In the `Utilities` class, there are three different methods that could be combined in order to not iterate through the whole matrix several times. Instead of returning a matrix with booleans in the `findValidMoves()` method, a list of coordinates would be preferrable. The list would then deprecate methods such as `numberOfValidMoves()` and `hasValidMoves()`, because a list already contains such information. This would of course increase the performance and make a better AI on slow systems.
+
+I would also cut down on dependencies such as the `OthelloCoordinate` class, since it could easily be replaced by an int array of two elements. Another class that showed little to no use was `StateChange`, which I thought would be handy when creating a state transition table if I had the time.
+
+To make the source code more clear, and to make it more readable for a person familiar with the minimax algorithm, I would follow the pseudo code more closely. At the time of writing, there is no mention of the `Max-Value()` and `Min-Value()` methods in the source code, which may confuse the reader. The implementation may even be wrong at places. This is because I thought I would be able to make a shorter and a more compressed solution, and it would be more clear to approach the algorithm with a human/AI approach instead of a min/max approach.
+
+Experiences
+-----------
+
+All in all, I gained lots of experience during this assignment. It is the first time I’ve constructed an application able to slow down a graphical interface in such a way it was noticeable when not using thread workers. This lead me into researching and learning about Java Swings `SwingWorker` class and the usefulness of the `SwingUtilities.invokeLater()` method. This prevented the graphical user interface from freezing when the AI was calculating the next move.
+
+I found the mini-max with alpha-beta pruning algorithm very interesting and a great introduction to what may be considered an intelligent system. I realize it may be flawed and not be optimal to this application, but it was comprehensible and educational enough for me to be able to grasp more sophisticated algorithms in the same problem domain.
+
+I now realize that some problems may not be feasible to solve perfectly due to the complexity in some cases. A similar application for a different game e.g. the game of Go(Silver and al 2016), the time complexity would be to large with this algorithm.
+
+I tried to implement a state transition table in order to store comuted nodes in the tree and failed, as it was to complex for me to re-implement methods such as `hashCode()` and `equals()` in the keys to the hashmap. The re-implementation would be necessary to be able to fetch the stored objects in a hashmap with a newly constructed key. Another challenge was to sort out what information to store in the table, as some information was time dependant and other was changed from search to search, such as the alpha/beta values. This is a valuable experience, and it would be interesting to see if there would be any computational gains to store objects in such fashion.
+
 Russel, P., S. Norvig. 2010. *Artificial Intelligence, a Modern Approach*. Prentice Hall. <http://aima.cs.berkeley.edu/>.
+
+Silver, David, and Aja Huang et al. 2016. “Mastering the Game of Go with Deep Neural Networks and Tree Search.” doi:10.1038/nature16961. Google DeepMind. <http://www.nature.com/nature/journal/v529/n7587/full/nature16961.html>.
 
 
