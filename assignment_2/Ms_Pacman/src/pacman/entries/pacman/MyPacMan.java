@@ -65,11 +65,9 @@ public class MyPacMan extends Controller<MOVE>
 	private void verifyData(LinkedList<DataTuple> dataList) {
 		int correctGuesses = 0;
 
-		for (DataTuple tuple : dataList) {
-			if (tuple.DirectionChosen.equals(this.rootNode.getDecision(tuple))) {
+		for (DataTuple tuple : dataList)
+			if (tuple.DirectionChosen.equals(this.rootNode.getDecision(tuple)))
 				correctGuesses++;
-			}
-		}
 		System.out.println("\n>> Classifier accuracy: " + correctGuesses / (double)dataList.size());
 	}
 
