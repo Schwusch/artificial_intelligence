@@ -72,13 +72,11 @@ public class Node implements Serializable {
      * @return A {@link pacman.game.Constants.MOVE}
      */
     Constants.MOVE getDecision(DataTuple tuple) {
-        Field field;
-        Constants.MOVE returnMove = null;
-        if (this.isLeafNode) returnMove = this.move;
-        else {
+        Constants.MOVE returnMove = this.move;
+        if (!this.isLeafNode) {
             try {
                 // Retrieve the attributes field through reflection
-                field = DataTuple.class.getDeclaredField(this.attribute);
+                Field field = DataTuple.class.getDeclaredField(this.attribute);
                 // If this attribute is already discretized:
                 if (this.attribute.contains("Edible") || this.attribute.contains("Dir")) {
                     returnMove = childNodes.get(
@@ -93,7 +91,6 @@ public class Node implements Serializable {
                 } else {
                     System.out.println("No decision was found at attribute: " + this.attribute +
                             ", number of child nodes: " + this.childNodes.size());
-                    returnMove = this.move;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
