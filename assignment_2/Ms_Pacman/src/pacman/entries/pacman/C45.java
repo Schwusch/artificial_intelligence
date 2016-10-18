@@ -23,17 +23,11 @@ public class C45 {
         HashMap<String, Double> gains = new HashMap<>();
 
         for (String attr : attributes) {
-            Field field = null;
-            try {
-                field = DataTuple.class.getDeclaredField(attr);
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            }
             LinkedList<DataTuple> subset;
             double infoAD = 0;
             double splitInfoAD = 0;
             for (String value : Utils.getAttributeVariations(attr)) {
-                subset = Utils.createSubset(dataList, field, value);
+                subset = Utils.createSubset(dataList, attr, value);
                 infoAD += ((double) subset.size() / (double) dataList.size()) * calculateInfoD(subset);
                 if(subset.size() > 0) {
                     splitInfoAD += -((double) subset.size() / (double) dataList.size()) *
