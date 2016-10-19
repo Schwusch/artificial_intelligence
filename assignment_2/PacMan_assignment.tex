@@ -276,6 +276,36 @@ private void verifyData(LinkedList<DataTuple> dataList) {
 \section{Conclusions}
 There are of course several approaches that could have been taken to the different subproblems of this assignment. Some requirements was mentioned in the specification but in most cases it didn't specify exactly with what means and methods the requirements should be filled. For example other parameters could have been chosen for the AI-controller to make its decision from. Though we already have elaborated our method of choosing parameters previously in this report it should be mentioned that other ways could have been better. Maybe other parameters, in combination, would make a better AI-player.
 
+We wish we had the time and capacity to implement unsupervised machine learning to see which attributes were reasonable to include, as we surely would be surprised of the outcome. We would probably research unsupervised learning to gain more understanding of hidden patterns in the attributes if we would do this assignment again.
+
+The ID3/C4.5 decision tree algorithm alone is perhaps not the optimal Ms. Pac-Man algorithm, but it was very fast to implement and might be well suited for other problem domains. The resulting decision tree was easy to understand and a bit unsuspected(Listing \ref{treeprint}) since the top attributes would probably be chosen differently if chosen by hand.
+
+\begin{lstlisting}[caption=Partial console print of decision tree, label={treeprint}]
+ROOT
+|-> "pinkyDir" = DOWN:
+|   |-> "isPinkyEdible" = true:
+|   |   |-> "isSueEdible" = true:
+|   |   |   |-> "isBlinkyEdible" = true:
+|   |   |   |   |-> "pinkyDist" = HIGH:
+|   |   |   |   |   |-> "inkyDist" = HIGH:
+|   |   |   |   |   |     -> Return NEUTRAL
+|   |   |   |   |   |-> "inkyDist" = LOW:
+|   |   |   |   |       |-> "blinkyDir" = DOWN:
+|   |   |   |   |       |   |-> "inkyDir" = DOWN:
+|   |   |   |   |       |   |   |-> "blinkyDist" = HIGH:
+|   |   |   |   |       |   |   |   |-> "sueDir" = DOWN:
+|   |   |   |   |       |   |   |   |   |-> "isInkyEdible" = true:
+|   |   |   |   |       |   |   |   |   |   |-> "sueDist" = HIGH:
+|   |   |   |   |       |   |   |   |   |   |     |-> Return DOWN
+
+...
+
+|                       |-> "blinkyDir" = NEUTRAL:
+|                             |-> Return NEUTRAL
+|-> "pinkyDir" = NEUTRAL:
+      |-> Return NEUTRAL
+\end{lstlisting}}
+
 \bibliographystyle{plain}
 \bibliography{references}
 \end{document}
