@@ -7,6 +7,7 @@
 \usepackage{fancyvrb}
 \usepackage{natbib}
 \usepackage{graphicx}
+\usepackage[rightcaption]{sidecap}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -43,10 +44,11 @@
 \begin{document}
 
 \maketitle
-
+%\tableofcontents
+%\newpage
 \section{Introduction}
 In this assignment the objective was to implement an AI controller for Ms. Pacman that is capable of learning from data extracted from previous (human) gameplays. The controller had to be a decision tree
-trained by means of a ID3 algorithm\citep{russel2010artifical}. We chose to extend the attribute selection algorithm to C4.5\citep{russel2010artifical}, since it is such a small extension of ID3.
+trained by means of an ID3 algorithm\citep{russel2010artifical}. We chose to extend the attribute selection algorithm to C4.5\citep{russel2010artifical}, since it is such a small extension of ID3.
 
 \iffalse  % ------------TVEK-------------------
 \begin{itemize}
@@ -91,7 +93,7 @@ Other parameters that is not concerning the ghosts but still can be used are:
 \fi % ------------------END TVEK----------------------
 
     \subsection{Chosen parameters}
-    Our general approach when choosing parameters for the learning algorithm was to look at a human when learning to play Ms. Pac-Man. A human player might look at the state of the ghosts, are they edible, close and moving towards Ms. Pac-Man? Based on those criteria the player might have enough information to evade the ghosts and survive a little longer. Our philosophy was to use as little information as possible to solve the task, to avoid overfitting.
+    Our general approach when choosing parameters for the learning algorithm was to look at a human learning to play Ms. Pac-Man. A human player might look at the state of the ghosts, are they edible, close and moving towards Ms. Pac-Man? Based on those criteria the player might have enough information to evade the ghosts and survive a little longer. Our philosophy was to use as little information as possible to solve the task, to avoid overfitting.
 
     Our biggest issue was to determine, with the recorded data, whether Ms. Pac-Man was facing a ghost at a given time. This seemed impossible and multiple attempts were made to use the last chosen direction and direction of a ghost to make sense of the data. The issue was, when using the last made move as an attribute in any way, the decision tree became extremely shallow. It only required a ghosts direction as an attribute in the root node to determine the next move. This is because the subsets of the data, when finding subsets with an attribute taking a value combined with the class value, all data tuples in the subset has the same class and can be considered as a leaf node when passing that subset to a new node.
 
@@ -99,9 +101,9 @@ Other parameters that is not concerning the ghosts but still can be used are:
     The available parameters are in abundance and parameters such as total time since game started may not be relevant for the survival of Ms. Pac-Man. Similar parameters which does not have any effect to a human players behaviour are ruled out since our guess is that it would not contribute to the heuristic decision tree either.
 
     \subsection{Discretized parameters}
-    Some parameters are continuous, such as distance, and needs to be discretized before used in the decision tree. The reason for this is that the decision tree would have an unreasonable amount of child nodes if there were a child node for each value of a continuous attribute. It needs an unreasonable amount of data to support that many values. That is also why discretizing needs to be reasonable, with not to many possible discrete values.
+    Some parameters are continuous, such as distance, and needs to be discretized before used in the decision tree. The reason for this is that the decision tree would have an unreasonable amount of child nodes if there were a child node for each value of a continuous attribute. It needs an unreasonable amount of data to support that many values. This is also why discretizing needs to be reasonable, with not too many possible discrete values.
 
-    The Ms. Pac-Man framework provides a method and enumeration in the \verb|DataTuple| class for this purpose, with seven possible discrete values. We believed this also was to granular and made a similar method and enumeration, limiting the possible values to \verb|HIGH| and \verb|LOW|. The inflection point between these values was chosen to be a normalized distance value of 0.2. This value was simply concluded with guesses and empirical tests to find a moderate value that was good enough.
+    The Ms. Pac-Man framework provides a method and enumeration in the \verb|DataTuple| class for this purpose, with seven possible discrete values. We believed this also was too granular and made a similar method and enumeration, limiting the possible values to \verb|HIGH| and \verb|LOW|. The inflection point between these values was chosen to be a normalized distance value of 0.2. This value was simply concluded with guesses and empirical tests to find a moderate value that was good enough.
 
 \section{The learning algorithm}
 The learning algorithms main purpose is to create a decision tree that is able to return a \verb|MOVE| when given a game state. Our tree is created when calling a \verb|Node| constructor with the complete dataset and a list of attributes to learn from. This object will be the decision tree root node. It has a \verb|getDecision()| method which will return a \verb|MOVE| object that the learning algorithm views as the most appropriate according to the learning data.
@@ -200,13 +202,79 @@ for (String attr : attributes) { |\label{forEveryAttr}|
     The algorithm then returns the attribute with the highest gain ratio.
 
     \subsection{The Node class}
-    Här ska vi förklara nodklassen
+    \SaveVerb{node}|Node|
+    \begin{SCfigure}[0.5][h]
+        \caption{The \protect\UseVerb{node} class diagram}
+        \includegraphics[width=0.6\textwidth]{DiagramNode}
+        \label{nodeClassDiag}
+    \end{SCfigure}
+
+    The \UseVerb{node} class is both responsible for building the decision tree and being an entity in the resulting decision tree. When using the public constructor, several checks are made to determine if that node is going to be a leaf node or not. First of all, a check is made on the dataset to determine if all datapoints have the same class (Listing \ref{nodepublic}, line \ref{check1}), which qualifies the node as a leaf node.
+
+    Another check is then made to see if there is no attributes left in the attribute list, which if true, sets the node as a leaf node with the majority class in the dataset as the node move (Listing \ref{nodepublic}, line \ref{check2start}-\ref{check2end}).
+
+    \begin{lstlisting}[language=Java, caption=Excerpt from \protect\UseVerb{node} public constructor, label={nodepublic}, escapechar=|]
+if (data.size() > 0 && Utils.checkifSetHasSameClass(data)) { |\label{check1}|
+    this.move = data.getFirst().DirectionChosen;
+    this.isLeafNode = true;
+} else if (attributes.size() == 0) {    |\label{check2start}|
+    this.move = Utils.findMajorityClass(data);
+    this.isLeafNode = true; |\label{check2end}|
+} else {
+    this.attribute = C45.selectAttribute(data, attributes); |\label{nodeElseStart}|
+    attributes.remove(this.attribute);
+    for (String value : Utils.getAttributeVariations(this.attribute)) {
+        LinkedList<DataTuple> subset = Utils.createSubset(data, attribute, value);
+        if (subset.size() > 0) {
+            childNodes.put(value, new Node(subset,
+                    (LinkedList<String>) attributes.clone()));
+        } else {
+            childNodes.put(value, new Node(Utils.findMajorityClass(subset)));
+        } |\label{nodeElseEnd}|
+    }
+}
+\end{lstlisting}
+
+    If none of those criteria are met, the node will have to ask the C4.5 algorithm for a suitable attribute and produce a child node for each possible value in that attribute (Listing \ref{nodepublic}, line \ref{nodeElseStart}-\ref{nodeElseEnd}). There is a specific case where no subset can be extracted from the original dataset. This is when no datatuples has the sought value in the demanded attribute, in which case the child node has to be a leaf node. Its move will have to be the majority class in the original dataset, and a private constructor is made for those cases, as seen in figure \ref{nodeClassDiag}, page \pageref{nodeClassDiag}.
+
+    After the root node public constructor has finished. the decision tree is done and is ready to make new decisions based on new data. Such decision is retrieved with the \verb|getDecision()| method, which recursively traverse the decision tree to find a leaf node based on the current game state in the \verb|tuple| variable(Listing \ref{getdecmeth}, line \ref{decdef}). The method assumes it is a leaf node until \verb|this.isLeafNode| is evaluated to false (Listing \ref{getdecmeth}, line \ref{leafnodefalse}). If the node is a leaf node it simply returns \verb|this.move|, otherwise it calls one of its child nodes \verb|getDecision()|. Which child node to call is based on the \verb|tuple| string representation of the value sought, stored in the class declared field named the same as \verb|this.attribute|(Listing \ref{getdecmeth}, line \ref{reflect}).
+
+    Not all attributes can be converted to a string representation immediately, e.g. a distance needs to discretized before used as a key in the hashmap(Listing \ref{getdecmeth}, line \ref{distStart}-\ref{distEnd}).
+
+    \SaveVerb{getdec}|getDecision()|
+    \begin{lstlisting}[language=Java, caption=The \protect\UseVerb{getdec} method., label={getdecmeth}, escapechar=^]
+Constants.MOVE getDecision(DataTuple tuple) { ^\label{decdef}^
+    Constants.MOVE returnMove = this.move;
+    if (!this.isLeafNode) { ^\label{leafnodefalse}^
+        Field field = DataTuple.class.getDeclaredField(this.attribute);^\label{reflect}^
+        if (this.attribute.contains("Edible") || this.attribute.contains("Dir")) {
+            returnMove = childNodes.get(field.get(tuple).toString()).getDecision(tuple);
+        } else if (this.attribute.contains("Dist")) { ^\label{distStart}^
+            returnMove = childNodes.get(
+                    Utils.discretizeDistance((Integer) field.get(tuple)).toString()
+            ).getDecision(tuple);  ^\label{distEnd}^
+        } else System.out.println("This shouldn't happen. Kick the author in the butt");
+    }
+    return returnMove;
+}\end{lstlisting}
 
 \section{Accuracy of the classifier}
-Inte så långt kapitel om hur vi mätte noggranheten på klassifieraren
+Listing \ref{verifycode} shows the method for verifying the accuracy of the classifier. The method receives the data that the AI-controller has been trained with and compares every chosen direction with the data. For every tuple whose move matches the training data, \verb|correctGuesses| increases. By dividing the \verb|correctGuesses| by the size of the list containing training data we can get the classifiers accuracy in percentage. The result is then printed to the console.
+
+    \SaveVerb{verify}|verifyData()|
+    \begin{lstlisting}[language=Java, caption=The \protect\UseVerb{verify} method, label={verifycode}, escapechar=|]
+private void verifyData(LinkedList<DataTuple> dataList) {
+	int correctGuesses = 0;
+	for (DataTuple tuple : dataList)
+		if (tuple.DirectionChosen.equals(this.rootNode.getDecision(tuple)))
+			correctGuesses++;
+
+	System.out.println("\n>> Classifier accuracy: " +
+	            correctGuesses / (double)dataList.size());
+} \end{lstlisting}
 
 \section{Conclusions}
-Erfarenheter etc
+There are of course several approaches that could have been taken to the different subproblems of this assignment. Some requirements was mentioned in the specification but in most cases it didn't specify exactly with what means and methods the requirements should be filled. For example other parameters could have been chosen for the AI-controller to make its decision from. Though we already have elaborated our method of choosing parameters previously in this report it should be mentioned that other ways could have been better. Maybe other parameters, in combination, would make a better AI-player.
 
 \bibliographystyle{plain}
 \bibliography{references}
