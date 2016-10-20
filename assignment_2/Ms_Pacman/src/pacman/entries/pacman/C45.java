@@ -18,6 +18,7 @@ public class C45 {
     /**
      * Takes a list of {@link DataTuple} and a list of attributes and returns the most beneficial
      * attribute for a decision tree node. Based on the C4.5 selection algorithm.
+     *
      * @param dataList The data list
      * @param attributes The attribute list
      * @return The most beneficial attribute
@@ -27,17 +28,16 @@ public class C45 {
             LinkedList<String> attributes) {
         // Calculate the total dataset entropy
         double infoD = calculateInfoD(dataList);
-        HashMap<String, AttributeWrapper> gains = new HashMap<>();
 
         // Calculate benefit and gainratio for every attribute
+        HashMap<String, AttributeWrapper> gains = new HashMap<>();
         for (String attr : attributes) {
             AttributeWrapper attrWrapper = new AttributeWrapper(attr);
-            LinkedList<DataTuple> subset;
             double infoAD = 0;
             double splitInfoAD = 0;
             // Calculate sum of every attribute name
             for (String value : Utils.getAttributeVariations(attr)) {
-                subset = Utils.createSubset(dataList, attr, value);
+                LinkedList<DataTuple> subset = Utils.createSubset(dataList, attr, value);
                 attrWrapper.addSubset(new SubSetWrapper(value, subset));
                 infoAD += ((double) subset.size() / (double) dataList.size()) * calculateInfoD(subset);
                 // Log(0) is undefined, so only do it if the subset size exceed 0
