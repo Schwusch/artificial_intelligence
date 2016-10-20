@@ -37,18 +37,18 @@ public class Node implements Serializable {
             // Otherwise, make child nodes
         } else {
             // Get the most relevant attribute for this node
-            this.attribute = C45.selectAttribute(data, attributes);
+            AttributeWrapper bestAttribute = C45.selectAttribute(data, attributes);
+            this.attribute = bestAttribute.name;
             attributes.remove(this.attribute);
             // Create a child node for each variation
-            for (String value : Utils.getAttributeVariations(this.attribute)) {
-                LinkedList<DataTuple> subset = Utils.createSubset(data, attribute, value);
+            for (SubSetWrapper value : bestAttribute.subsets) {
                 // If there exists a subset, make a recursive call
-                if (subset.size() > 0) {
-                    childNodes.put(value, new Node(subset, (LinkedList<String>) attributes.clone()));
-                    // If there is no data with the value embodied in the attribute,
+                if (value.subset.size() > 0) {
+                    childNodes.put(value.name, new Node(value.subset, (LinkedList<String>) attributes.clone()));
+                    // If there is no data with the name embodied in the attribute,
                     // take the majority class in the big data set and make it a child node
                 } else {
-                    childNodes.put(value, new Node(Utils.findMajorityClass(subset)));
+                    childNodes.put(value.name, new Node(Utils.findMajorityClass(value.subset)));
                 }
             }
         }

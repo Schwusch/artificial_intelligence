@@ -15,20 +15,32 @@ import java.util.Map;
  */
 public class C45 {
 
-    public static String selectAttribute(
+    /**
+     * Takes a list of {@link DataTuple} and a list of attributes and returns the most beneficial
+     * attribute for a decision tree node. Based on the C4.5 selection algorithm.
+     * @param dataList The data list
+     * @param attributes The attribute list
+     * @return The most beneficial attribute
+     */
+    public static AttributeWrapper selectAttribute(
             LinkedList<DataTuple> dataList,
             LinkedList<String> attributes) {
+        // Calculate the total dataset entropy
         double infoD = calculateInfoD(dataList);
-        String maxKeyInMap = null;
-        HashMap<String, Double> gains = new HashMap<>();
+        HashMap<String, AttributeWrapper> gains = new HashMap<>();
 
+        // Calculate benefit and gainratio for every attribute
         for (String attr : attributes) {
+            AttributeWrapper attrWrapper = new AttributeWrapper(attr);
             LinkedList<DataTuple> subset;
             double infoAD = 0;
             double splitInfoAD = 0;
+            // Calculate sum of every attribute name
             for (String value : Utils.getAttributeVariations(attr)) {
                 subset = Utils.createSubset(dataList, attr, value);
+                attrWrapper.addSubset(new SubSetWrapper(value, subset));
                 infoAD += ((double) subset.size() / (double) dataList.size()) * calculateInfoD(subset);
+                // Log(0) is undefined, so only do it if the subset size exceed 0
                 if(subset.size() > 0) {
                     splitInfoAD += -((double) subset.size() / (double) dataList.size()) *
                             (Math.log((double) subset.size() / (double) dataList.size()) / (double) Math.log(2));
@@ -39,17 +51,20 @@ public class C45 {
             double gainRatio = Double.MAX_VALUE;
             if(splitInfoAD > 0)
                 gainRatio = gainA / splitInfoAD;
-            gains.put(attr, gainRatio);
+            // Store the attributes gainratio in a hashmap
+            attrWrapper.gainRatio = gainRatio;
+            gains.put(attr, attrWrapper);
         }
 
+        AttributeWrapper maxGainRatioInMap = null;
         double maxValueInMap = -Double.MAX_VALUE;
-        for (Map.Entry<String, Double> entry : gains.entrySet()) {
-            if (entry.getValue() > maxValueInMap) {
-                maxValueInMap = entry.getValue();
-                maxKeyInMap = entry.getKey();
+        for (Map.Entry<String, AttributeWrapper> entry : gains.entrySet()) {
+            if (entry.getValue().gainRatio > maxValueInMap) {
+                maxValueInMap = entry.getValue().gainRatio;
+                maxGainRatioInMap = entry.getValue();
             }
         }
-        return maxKeyInMap;
+        return maxGainRatioInMap;
     }
 
     private static double calculateInfoD(LinkedList<DataTuple> dataTuples) {
