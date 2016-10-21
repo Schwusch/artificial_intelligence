@@ -117,7 +117,7 @@ The learning algorithms main purpose is to create a decision tree that is able t
 
     \SaveVerb{term}|C45.selectAttribute()|
     \begin{lstlisting}[language=Java, caption=Method declaration of \protect\UseVerb{term}, label={attribute}, escapechar=|]
-public static String selectAttribute(
+public static AttributeWrapper selectAttribute(
             LinkedList<DataTuple> dataList,
             LinkedList<String> attributes) {
     |\dots|
@@ -146,7 +146,7 @@ private static double calculateInfoD(LinkedList<DataTuple> dataTuples) {
     return infoD;
 }\end{lstlisting}
 
-    Both are static and holds no state between method calls. The \verb|selectAttribute()| method simply returns the name of the most rewarding attribute in a string and the \verb|calculateInfoD()| method returns a \verb|double| value derived of equation \ref{infoD}.
+    Both are static and holds no state between method calls. The \verb|selectAttribute()| method returns a wrapper of the most rewarding attribute in a string and the \verb|calculateInfoD()| method returns a \verb|double| value derived of equation \ref{infoD}.
     \begin{equation} \label{infoD}
     Info(D)=-\sum_{i=1}^{m}p_i log_2(p_i)
     \end{equation}
@@ -181,7 +181,8 @@ double infoD = calculateInfoD(dataList); |\label{infoDCalc}|
 for (String attr : attributes) { |\label{forEveryAttr}|
     |\dots|
     for (String value : Utils.getAttributeVariations(attr)) {
-        subset = Utils.createSubset(dataList, field, value); |\label{infoADCalcStart}|
+        LinkedList<DataTuple> subset = Utils.createSubset(dataList, attr, value); |\label{infoADCalcStart}|
+        attrWrapper.addSubset(new SubSetWrapper(value, subset));
         infoAD += ((double) subset.size() / (double) dataList.size()) *
                                                     calculateInfoD(subset); |\label{infoADCalcEnd}|
         if(subset.size() > 0) {                                             |\label{splitInfoADStart}|
@@ -221,15 +222,15 @@ if (data.size() > 0 && Utils.checkifSetHasSameClass(data)) { |\label{check1}|
     this.move = Utils.findMajorityClass(data);
     this.isLeafNode = true; |\label{check2end}|
 } else {
-    this.attribute = C45.selectAttribute(data, attributes); |\label{nodeElseStart}|
+    AttributeWrapper bestAttribute = C45.selectAttribute(data, attributes);|\label{nodeElseStart}|
+    this.attribute = bestAttribute.name;
     attributes.remove(this.attribute);
-    for (String value : Utils.getAttributeVariations(this.attribute)) {
-        LinkedList<DataTuple> subset = Utils.createSubset(data, attribute, value);
-        if (subset.size() > 0) {
-            childNodes.put(value, new Node(subset,
-                    (LinkedList<String>) attributes.clone()));
+    for (SubSetWrapper value : bestAttribute.subsets) {
+        if (value.subset.size() > 0) {
+            childNodes.put(value.name, new Node(
+                    value.subset, (LinkedList<String>) attributes.clone()));
         } else {
-            childNodes.put(value, new Node(Utils.findMajorityClass(subset)));
+            childNodes.put(value.name, new Node(Utils.findMajorityClass(value.subset)));
         } |\label{nodeElseEnd}|
     }
 }
@@ -288,15 +289,7 @@ ROOT
 |   |   |   |-> "isBlinkyEdible" = true:
 |   |   |   |   |-> "pinkyDist" = HIGH:
 |   |   |   |   |   |-> "inkyDist" = HIGH:
-|   |   |   |   |   |     -> Return NEUTRAL
-|   |   |   |   |   |-> "inkyDist" = LOW:
-|   |   |   |   |       |-> "blinkyDir" = DOWN:
-|   |   |   |   |       |   |-> "inkyDir" = DOWN:
-|   |   |   |   |       |   |   |-> "blinkyDist" = HIGH:
-|   |   |   |   |       |   |   |   |-> "sueDir" = DOWN:
-|   |   |   |   |       |   |   |   |   |-> "isInkyEdible" = true:
-|   |   |   |   |       |   |   |   |   |   |-> "sueDist" = HIGH:
-|   |   |   |   |       |   |   |   |   |   |     |-> Return DOWN
+|   |   |   |   |   |     |-> Return NEUTRAL
 
 ...
 
