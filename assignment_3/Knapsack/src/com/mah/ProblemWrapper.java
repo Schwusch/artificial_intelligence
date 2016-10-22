@@ -9,16 +9,21 @@ import java.util.LinkedList;
  * Wraps a knapsack problem with knapsacks and items
  */
 public class ProblemWrapper {
-    private LinkedList<Item> items;
+    private LinkedList<Item> itemsLeft;
+    private LinkedList<Item> allItems;
     private ArrayList<KnapSack> knapsacks;
 
     public ProblemWrapper(LinkedList<Item> items, ArrayList<KnapSack> knapsacks) {
-        this.items = items;
+        this.allItems = items;
+        this.itemsLeft = (LinkedList<Item>) items.clone();
         this.knapsacks = knapsacks;
     }
 
-    public LinkedList<Item> getItems() {
-        return items;
+    public LinkedList<Item> getItemsLeft() {
+        return itemsLeft;
+    }
+    public LinkedList<Item> getAllItems() {
+        return allItems;
     }
 
     public ArrayList<KnapSack> getKnapsacks() {
@@ -28,9 +33,11 @@ public class ProblemWrapper {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for(KnapSack sack : knapsacks) sb.append(sack + "\n");
+        sb.append("------PROBLEM WRAPPER-----\n");
+        knapsacks.forEach(sb::append);
         sb.append("Remaining items not placed:\n");
-        for(Item item : items) sb.append(item);
+        itemsLeft.forEach(sb::append);
+        sb.append("--------------------------\n");
         return sb.toString();
     }
 }

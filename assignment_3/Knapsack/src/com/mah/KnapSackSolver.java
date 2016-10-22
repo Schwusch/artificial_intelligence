@@ -13,7 +13,7 @@ public class KnapSackSolver {
 
     public static void greedyFillKnapsacks(ProblemWrapper wrapper) {
         ArrayList<KnapSack> knapSacks = wrapper.getKnapsacks();
-        LinkedList<Item> itemsToAdd = wrapper.getItems();
+        LinkedList<Item> itemsToAdd = wrapper.getItemsLeft();
         itemsToAdd.sort(new ItemComparatorByBenefit());
 
 		for (KnapSack sack : knapSacks) {

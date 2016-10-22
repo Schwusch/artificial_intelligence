@@ -45,10 +45,12 @@ public class KnapSack {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Knapsack weight: " + totalWeight + "\n");
-        sb.append("Knapsack value: " + totalValue + "\n");
-        sb.append("Items in knapsack:\n");
+        sb.append("KNAPSACK:\n");
+        sb.append("Weight: " + totalWeight + "\n");
+        sb.append("Value: " + totalValue + "\n");
+        sb.append("Items:\n");
         items.forEach(sb::append);
+        sb.append("\n");
         return sb.toString();
     }
 }
