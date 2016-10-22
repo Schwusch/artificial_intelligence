@@ -17,6 +17,6 @@ public class Item {
     }
 
     public String toString(){
-        return "weight: " + weight + ", value: " + value + ", benefit: " + benefit + "\n";
+        return "ITEM: weight: " + weight + ", value: " + value + ", benefit: " + benefit + "\n";
     }
 }

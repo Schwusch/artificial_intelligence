@@ -48,7 +48,7 @@ public class KnapSack {
         sb.append("KNAPSACK:\n");
         sb.append("Weight: " + totalWeight + "\n");
         sb.append("Value: " + totalValue + "\n");
-        sb.append("Items:\n");
+        sb.append("Contains " + items.size() + " items:\n");
         items.forEach(sb::append);
         sb.append("\n");
         return sb.toString();
