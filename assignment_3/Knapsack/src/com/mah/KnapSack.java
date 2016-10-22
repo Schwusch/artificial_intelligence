@@ -29,7 +29,7 @@ public class KnapSack {
     }
 
     public boolean addItem(Item item) {
-        if(totalWeight + item.weight <= constraint) {
+        if(totalWeight + item.weight <= constraint && !items.contains(item)) {
             items.add(item);
             totalWeight += item.weight;
             totalValue += item.value;
