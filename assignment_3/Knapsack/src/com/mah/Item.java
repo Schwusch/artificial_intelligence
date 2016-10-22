@@ -13,7 +13,6 @@ public class Item {
     }
 
     public String toString(){
-
         return "weight: " + weight + ", value: " + value + ", benefit: " + (float)value/weight + "\n";
     }
 }

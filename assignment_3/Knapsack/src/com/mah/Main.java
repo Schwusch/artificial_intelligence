@@ -7,12 +7,12 @@ import java.util.LinkedList;
 
 public class Main {
     private static final int RESTRAINT = 12;
+    private static final int KNAPSACKS = 3;
 
     public static void main(String[] args) throws Exception {
-        LinkedList<Item> items = loadItems();
-        ArrayList<KnapSack> knapsacks = loadKnapsacks();
-        // TODO: vettefan
-
+        ProblemWrapper problemWrapper = new ProblemWrapper(loadItems(), loadKnapsacks());
+        KnapSackSolver.greedyFillKnapsacks(problemWrapper);
+        KnapSackSolver.improvingNeighborsearch(problemWrapper);
     }
 
     /*
@@ -24,9 +24,11 @@ public class Main {
         String line = br.readLine();
 
         while (line != null) {
-            String[] values = line.split(",");
-            items.add(new Item(Integer.parseInt(values[0]),
-                    Integer.parseInt(values[1])));
+            if(!line.startsWith("#")) {
+                String[] values = line.split(",");
+                items.add(new Item(Integer.parseInt(values[0]),
+                        Integer.parseInt(values[1])));
+            }
             line = br.readLine();
         }
         return items;
@@ -38,7 +40,7 @@ public class Main {
     private static ArrayList<KnapSack> loadKnapsacks() {
         ArrayList<KnapSack> knapsacks = new ArrayList<>();
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < KNAPSACKS; i++) {
             knapsacks.add(new KnapSack(RESTRAINT));
         }
         return knapsacks;
