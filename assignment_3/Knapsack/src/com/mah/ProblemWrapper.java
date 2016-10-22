@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
- * Created by schwusch on 2016-10-22.
+ * Created by Olle Caspersson and Jonathan Böcker on 2016-10-22.
+ *
+ * Wraps a knapsack problem with knapsacks and items
  */
 public class ProblemWrapper {
     private LinkedList<Item> items;

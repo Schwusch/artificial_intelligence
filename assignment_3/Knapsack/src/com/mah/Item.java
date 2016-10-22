@@ -1,18 +1,22 @@
 package com.mah;
 
 /**
- * Created by schwusch on 2016-10-22.
+ * Created by Olle Caspersson and Jonathan Böcker on 2016-10-22.
+ *
+ * Represent a knapsack item.
  */
 public class Item {
     public int weight;
     public int value;
+    public float benefit;
 
     public Item(int weight, int value) {
         this.value = value;
         this.weight = weight;
+        this.benefit = (float)value/weight;
     }
 
     public String toString(){
-        return "weight: " + weight + ", value: " + value + ", benefit: " + (float)value/weight + "\n";
+        return "weight: " + weight + ", value: " + value + ", benefit: " + benefit + "\n";
     }
 }

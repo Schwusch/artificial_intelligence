@@ -3,7 +3,9 @@ package com.mah;
 import java.util.LinkedList;
 
 /**
- * Created by schwusch on 2016-10-22.
+ * Created by Olle Caspersson and Jonathan Böcker on 2016-10-22.
+ *
+ * Represents a knapsack.
  */
 public class KnapSack {
     private LinkedList<Item> items = new LinkedList<>();
@@ -20,6 +22,14 @@ public class KnapSack {
             items.add(item);
             totalWeight += item.weight;
             totalValue += item.value;
+            return true;
+        } else return false;
+    }
+
+    public boolean removeItem(Item item) {
+        if(items.remove(item)) {
+            totalWeight -= item.weight;
+            totalValue -= item.value;
             return true;
         } else return false;
     }
