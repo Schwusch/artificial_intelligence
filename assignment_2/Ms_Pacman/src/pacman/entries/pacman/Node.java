@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * Created by Jonathan Böcker on 2016-10-01.
+ * Created by Jonathan Böcker and Olle Casperson on 2016-10-01.
  * This is a class representing a node in a decision tree
  */
 public class Node implements Serializable {

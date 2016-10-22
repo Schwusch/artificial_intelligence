@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * Created by Jonathan Böcker on 2016-09-27.
+ * Created by Jonathan Böcker and Olle Casperson on 2016-09-27.
  * <p>
  * Implementation of the C45 algorithm for the Pacman assignment
  */

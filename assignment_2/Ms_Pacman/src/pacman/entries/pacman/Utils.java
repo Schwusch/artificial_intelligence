@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
- * Created by Jonathan Böcker on 2016-10-04.
+ * Created by Jonathan Böcker and Olle Casperson on 2016-10-04.
  * A class containing utility functions for the other classes to use.
  */
 public class Utils {
