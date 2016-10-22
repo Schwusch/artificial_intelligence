@@ -5,7 +5,7 @@ import java.util.Comparator;
 /**
  * Created by schwusch on 2016-10-22.
  */
-public class ItemComparator implements Comparator<Item> {
+public class ItemComparatorByBenefit implements Comparator<Item> {
     @Override
     public int compare(Item item1, Item item2) {
         float item1benefit = (float) item1.value / item1.weight;

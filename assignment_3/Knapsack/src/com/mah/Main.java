@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         ProblemWrapper problemWrapper = new ProblemWrapper(loadItems(), loadKnapsacks());
         KnapSackSolver.greedyFillKnapsacks(problemWrapper);
-        KnapSackSolver.improvingNeighborsearch(problemWrapper);
+        KnapSackSolver.improvingNeighborSearch(problemWrapper);
     }
 
     /*

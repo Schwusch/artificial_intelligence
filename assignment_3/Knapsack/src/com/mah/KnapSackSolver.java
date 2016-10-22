@@ -11,11 +11,11 @@ public class KnapSackSolver {
     public static void greedyFillKnapsacks(ProblemWrapper wrapper) {
         ArrayList<KnapSack> knapsack = wrapper.getKnapsacks();
         LinkedList<Item> items = wrapper.getItems();
-        items.sort(new ItemComparator());
+        items.sort(new ItemComparatorByBenefit());
 
     }
 
-    public static void improvingNeighborsearch(ProblemWrapper wrapper) {
+    public static void improvingNeighborSearch(ProblemWrapper wrapper) {
 
     }
 }

@@ -1,3 +1,5 @@
+### Items for the knapsack problem
+# weight,value
 1,10
 4,15
 10,1
