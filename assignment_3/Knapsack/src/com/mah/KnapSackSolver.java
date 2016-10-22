@@ -26,7 +26,7 @@ public class KnapSackSolver {
 		}
           
         for(int i = 0; i < knapsack.size(); i++) {
-        		System.out.println("värde " + knapsack.get(i).getTotalValue() + " vikt: " + knapsack.get(i).getTotalWeight());
+        		System.out.println("vÃ¤rde " + knapsack.get(i).getTotalValue() + " vikt: " + knapsack.get(i).getTotalWeight());
    
         }
         for(int i = 0; i < itemsToAdd.size(); i++) {
