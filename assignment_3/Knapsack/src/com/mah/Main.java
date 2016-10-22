@@ -12,6 +12,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         ProblemWrapper problemWrapper = new ProblemWrapper(loadItems(), loadKnapsacks());
         KnapSackSolver.greedyFillKnapsacks(problemWrapper);
+        System.out.println(problemWrapper);
         KnapSackSolver.improvingNeighborSearch(problemWrapper);
     }
 
