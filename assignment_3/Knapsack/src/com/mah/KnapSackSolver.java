@@ -24,12 +24,16 @@ public class KnapSackSolver {
         }
     }
 
-    public static void improvingNeighborSearch(ProblemWrapper wrapper) {
-        ArrayList<ProblemWrapper> neighbors = findNeighbors(wrapper);
+    public static ProblemWrapper improvingNeighborSearch(ProblemWrapper wrapper) {
+        ProblemWrapper neighbor = findBestNeighbor(wrapper.copy());
+        while(neighbor.totalValue() > wrapper.totalValue()) {
+            neighbor = findBestNeighbor(neighbor.copy());
+        }
+        return neighbor;
     }
 
-    private static ArrayList<ProblemWrapper> findNeighbors(ProblemWrapper wrapper) {
-        ArrayList<ProblemWrapper> neighbors = new ArrayList<>();
+    private static ProblemWrapper findBestNeighbor(ProblemWrapper wrapper) {
+        ProblemWrapper bestNeighbor = null;
         ArrayList<KnapSack> knapSacks = wrapper.getKnapsacks();
 
         // Try all permutations of knapsack item moves to find neighbors
@@ -54,7 +58,7 @@ public class KnapSackSolver {
                         } else {
                             Iterator<Item> sack2ItemIter = ((LinkedList<Item>)sack2.getItems().clone()).iterator();
                             while (sack2ItemIter.hasNext()) {
-
+                                sack1ItemIter.next();
                             }
                         }
                     }
@@ -62,6 +66,6 @@ public class KnapSackSolver {
             }
         }
 
-        return neighbors;
+        return bestNeighbor;
     }
 }

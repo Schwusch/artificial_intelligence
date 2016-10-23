@@ -13,7 +13,7 @@ public class Main {
         System.out.println(greedyProblemWrapper);
 
         ProblemWrapper neighborProblemWrapper = greedyProblemWrapper.copy();
-        KnapSackSolver.improvingNeighborSearch(neighborProblemWrapper);
+        neighborProblemWrapper = KnapSackSolver.improvingNeighborSearch(neighborProblemWrapper);
 
         System.out.println(neighborProblemWrapper);
     }
