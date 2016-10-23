@@ -16,7 +16,7 @@ public class KnapSackSolver {
         LinkedList<Item> itemsToAdd = wrapper.getItemsLeft();
         itemsToAdd.sort(new ItemComparatorByBenefit());
 
-		for (KnapSack sack : knapSacks) {
+        for (KnapSack sack : knapSacks) {
             Iterator<Item> iter = itemsToAdd.iterator();
             while (iter.hasNext())
                 if(sack.addItem(iter.next()))
@@ -25,10 +25,14 @@ public class KnapSackSolver {
     }
 
     public static ProblemWrapper improvingNeighborSearch(ProblemWrapper wrapper) {
-        ProblemWrapper neighbor = findBestNeighbor(wrapper.copy());
-        while(neighbor.totalValue() > wrapper.totalValue()) {
-            neighbor = findBestNeighbor(neighbor.copy());
-        }
+        ProblemWrapper neighbor = wrapper;
+        do {
+            ProblemWrapper neighborMaybe = findBestNeighbor(neighbor.copy());
+            if(neighborMaybe != null && neighborMaybe.totalValue() > neighbor.totalValue()) {
+                neighbor = neighborMaybe;
+            }
+        } while(neighbor.totalValue() > wrapper.totalValue());
+
         return neighbor;
     }
 
@@ -58,7 +62,7 @@ public class KnapSackSolver {
                         } else {
                             Iterator<Item> sack2ItemIter = ((LinkedList<Item>)sack2.getItems().clone()).iterator();
                             while (sack2ItemIter.hasNext()) {
-                                sack1ItemIter.next();
+                                sack2ItemIter.next();
                             }
                         }
                     }
