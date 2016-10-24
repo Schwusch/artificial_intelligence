@@ -81,7 +81,7 @@ public class KnapSackSolver {
                     newNeighbor.getKnapsacks().remove(newNeighbor.getKnapsackById(toSack.id));
                     newNeighbor.getKnapsacks().add(toSack);
                     newNeighbor.getItemsLeft().remove(itemNoSack);
-                    System.out.println("hallu");
+                    
                     if (bestNeighbor == null || newNeighbor.totalValue() > bestNeighbor.totalValue()) {
                         bestNeighbor = newNeighbor;
                     }
