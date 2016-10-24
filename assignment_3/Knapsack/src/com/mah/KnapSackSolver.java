@@ -71,17 +71,20 @@ public class KnapSackSolver {
     private static ProblemWrapper addToKnapsack(Item item, KnapSack fromSack, KnapSack toSack, ProblemWrapper currentState) {
         ProblemWrapper bestNeighbor = null;
         if (toSack.addItem(item)) {
-            LinkedList<Item> fromSackItemsClone = (LinkedList<Item>)fromSack.getItems().clone();
-            fromSackItemsClone.remove(item);
+            fromSack.removeItem(item);
             // Add another item to the first sack
             for (Item itemNoSack : currentState.getItemsLeft()) {
                 if(fromSack.addItem(itemNoSack)) {
-                    LinkedList<Item> newItemsLeft = (LinkedList<Item>)currentState.getItemsLeft().clone();
-                    newItemsLeft.remove(item);
-                    // GRANNE
+                    ProblemWrapper newNeighbor = currentState.copy();
+                    newNeighbor.getKnapsacks().remove(newNeighbor.getKnapsackById(fromSack.id));
+                    newNeighbor.getKnapsacks().add(fromSack);
+                    newNeighbor.getKnapsacks().remove(newNeighbor.getKnapsackById(toSack.id));
+                    newNeighbor.getKnapsacks().add(toSack);
+                    newNeighbor.getItemsLeft().remove(itemNoSack);
 
-                    // JÄMFÖR GRANNE MED bestNeighbor!
-                    // ERSÄTT OM BÄTTRE
+                    if (bestNeighbor == null || newNeighbor.totalValue() > bestNeighbor.totalValue()) {
+                        bestNeighbor = newNeighbor;
+                    }
                 }
             }
         }

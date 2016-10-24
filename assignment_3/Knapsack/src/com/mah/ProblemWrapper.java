@@ -43,6 +43,15 @@ public class ProblemWrapper {
         return sum;
     }
 
+    public KnapSack getKnapsackById(int id){
+        for (KnapSack sack : knapsacks) {
+            if (sack.id == id) {
+                return sack;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

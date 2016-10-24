@@ -38,7 +38,7 @@ public class Utilities {
         ArrayList<KnapSack> knapsacks = new ArrayList<>();
 
         for (int i = 0; i < KNAPSACKS; i++) {
-            knapsacks.add(new KnapSack(RESTRAINT));
+            knapsacks.add(new KnapSack(RESTRAINT, i));
         }
         return knapsacks;
     }

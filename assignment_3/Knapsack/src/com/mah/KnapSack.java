@@ -12,16 +12,19 @@ public class KnapSack {
     private int constraint;
     private int totalWeight = 0;
     private int totalValue = 0;
+    public int id;
 
-    private KnapSack(LinkedList<Item> items, int constraint, int totalWeight, int totalValue) {
+    private KnapSack(LinkedList<Item> items, int constraint, int totalWeight, int totalValue, int id) {
         this.items = items;
         this.constraint = constraint;
         this.totalWeight = totalWeight;
         this.totalValue = totalValue;
+        this.id = id;
     }
 
-    public KnapSack(int constraint) {
+    public KnapSack(int constraint, int id) {
         this.constraint = constraint;
+        this.id = id;
     }
 
     public LinkedList<Item> getItems() {
@@ -54,7 +57,7 @@ public class KnapSack {
     }
 
     public KnapSack copy() {
-        return new KnapSack((LinkedList<Item>)items.clone(), constraint, totalWeight, totalValue);
+        return new KnapSack((LinkedList<Item>)items.clone(), constraint, totalWeight, totalValue, id);
     }
 
     @Override
