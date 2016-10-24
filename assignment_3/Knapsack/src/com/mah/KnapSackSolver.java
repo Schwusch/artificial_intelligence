@@ -72,15 +72,16 @@ public class KnapSackSolver {
         ProblemWrapper bestNeighbor = null;
         if (toSack.addItem(item)) {
             LinkedList<Item> fromSackItemsClone = (LinkedList<Item>)fromSack.getItems().clone();
-            if (!fromSackItemsClone.remove(item)) {
-                System.out.println("Could not remove item...");
-            }
+            fromSackItemsClone.remove(item);
             // Add another item to the first sack
-            Iterator<Item> itemLeftIter = ((LinkedList<Item>) currentState.getItemsLeft().clone()).iterator();
-            while (itemLeftIter.hasNext()) {
-                if (fromSack.addItem(itemLeftIter.next())) {
-                    itemLeftIter.remove();
-                    // TODO: This is a valid neighbor?
+            for (Item itemNoSack : currentState.getItemsLeft()) {
+                if(fromSack.addItem(itemNoSack)) {
+                    LinkedList<Item> newItemsLeft = (LinkedList<Item>)currentState.getItemsLeft().clone();
+                    newItemsLeft.remove(item);
+                    // GRANNE
+
+                    // JÄMFÖR GRANNE MED bestNeighbor!
+                    // ERSÄTT OM BÄTTRE
                 }
             }
         }
