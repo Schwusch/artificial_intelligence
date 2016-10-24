@@ -25,19 +25,20 @@ public class KnapSackSolver {
     }
 
     public static ProblemWrapper improvingNeighborSearch(ProblemWrapper wrapper) {
-        ProblemWrapper neighbor = wrapper;
+        ProblemWrapper bestNeighbor = wrapper;
+        ProblemWrapper lastNeighbor = wrapper;
         do {
-            ProblemWrapper neighborMaybe = findBestNeighbor(neighbor.copy());
-            if(neighborMaybe != null && neighborMaybe.totalValue() > neighbor.totalValue()) {
-                neighbor = neighborMaybe;
+            lastNeighbor = findBestNeighbor(bestNeighbor.copy());
+            if(lastNeighbor.totalValue() > bestNeighbor.totalValue() ) {
+                bestNeighbor = lastNeighbor;
             }
-        } while(neighbor.totalValue() > wrapper.totalValue());
+        } while(lastNeighbor.totalValue() > bestNeighbor.totalValue());
 
-        return neighbor;
+        return bestNeighbor;
     }
 
     private static ProblemWrapper findBestNeighbor(ProblemWrapper wrapper) {
-        ProblemWrapper bestNeighbor = null;
+        ProblemWrapper bestNeighbor = wrapper;
         ArrayList<KnapSack> knapSacks = wrapper.getKnapsacks();
 
         // Try all permutations of knapsack item moves to find neighbors
