@@ -28,10 +28,10 @@ public class KnapSackSolver {
         ProblemWrapper bestNeighbor = wrapper;
         ProblemWrapper lastNeighbor = wrapper;
         do {
-            lastNeighbor = findBestNeighbor(bestNeighbor.copy());
             if(lastNeighbor.totalValue() > bestNeighbor.totalValue() ) {
                 bestNeighbor = lastNeighbor;
             }
+            lastNeighbor = findBestNeighbor(bestNeighbor.copy());
         } while(lastNeighbor.totalValue() > bestNeighbor.totalValue());
 
         return bestNeighbor;
@@ -42,31 +42,38 @@ public class KnapSackSolver {
         ArrayList<KnapSack> knapSacks = wrapper.getKnapsacks();
 
         // Try all permutations of knapsack item moves to find neighbors
-        for (KnapSack sack1 : knapSacks) {
-            for (KnapSack sack2 : knapSacks) {
-                if (sack1 != sack2) {
-                    Iterator<Item> sack1ItemIter = ((LinkedList<Item>)sack1.getItems().clone()).iterator();
-                    while (sack1ItemIter.hasNext()) {
-                        Item item = sack1ItemIter.next();
+        for (KnapSack fromSack : knapSacks) {
+            for (KnapSack toSack : knapSacks) {
+                if (fromSack != toSack) {
+                    Iterator<Item> fromSackItemIter = ((LinkedList<Item>)fromSack.getItems().clone()).iterator();
+                    while (fromSackItemIter.hasNext()) {
+                        Item item = fromSackItemIter.next();
                         // If the item fits the other sack
-                        if (sack2.addItem(item)) {
-                            sack1ItemIter.remove();
-                            // Add another item to the first sack
-                            Iterator<Item> itemLeftIter = ((LinkedList<Item>)wrapper.getItemsLeft().clone()).iterator();
-                            while (itemLeftIter.hasNext()) {
-                                if (sack1.addItem(itemLeftIter.next())) {
-                                    itemLeftIter.remove();
-                                    // TODO: This is a valid neighbor?
-                                }
-                            }
-                        // If the item does NOT fit the other sack, remove one, then add it
-                        } else {
-                            Iterator<Item> sack2ItemIter = ((LinkedList<Item>)sack2.getItems().clone()).iterator();
-                            while (sack2ItemIter.hasNext()) {
-                                sack2ItemIter.next();
-                            }
+                        ProblemWrapper newNeighbor = addToKnapsack(item, fromSack, toSack, wrapper);
+                        if (newNeighbor == null) {
+                            //TODO
                         }
                     }
+                }
+            }
+        }
+
+        return bestNeighbor;
+    }
+
+    private static ProblemWrapper addToKnapsack(Item item, KnapSack fromSack, KnapSack toSack, ProblemWrapper currentState) {
+        ProblemWrapper bestNeighbor = null;
+        if (toSack.addItem(item)) {
+            LinkedList<Item> fromSackItemsClone = (LinkedList<Item>)fromSack.getItems().clone();
+            if (!fromSackItemsClone.remove(item)) {
+                System.out.println("Could not remove item...");
+            }
+            // Add another item to the first sack
+            Iterator<Item> itemLeftIter = ((LinkedList<Item>) currentState.getItemsLeft().clone()).iterator();
+            while (itemLeftIter.hasNext()) {
+                if (fromSack.addItem(itemLeftIter.next())) {
+                    itemLeftIter.remove();
+                    // TODO: This is a valid neighbor?
                 }
             }
         }
