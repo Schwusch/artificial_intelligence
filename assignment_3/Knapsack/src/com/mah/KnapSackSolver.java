@@ -14,7 +14,7 @@ public class KnapSackSolver {
     public static void greedyFillKnapsacks(ProblemWrapper wrapper) {
         ArrayList<KnapSack> knapSacks = wrapper.getKnapsacks();
         LinkedList<Item> itemsToAdd = wrapper.getItemsLeft();
-        itemsToAdd.sort(new ItemComparatorByBenefit());
+        //itemsToAdd.sort(new ItemComparatorByBenefit());
 
         for (KnapSack sack : knapSacks) {
             Iterator<Item> iter = itemsToAdd.iterator();
@@ -81,7 +81,7 @@ public class KnapSackSolver {
                     newNeighbor.getKnapsacks().remove(newNeighbor.getKnapsackById(toSack.id));
                     newNeighbor.getKnapsacks().add(toSack);
                     newNeighbor.getItemsLeft().remove(itemNoSack);
-
+                    System.out.println("hallu");
                     if (bestNeighbor == null || newNeighbor.totalValue() > bestNeighbor.totalValue()) {
                         bestNeighbor = newNeighbor;
                     }
