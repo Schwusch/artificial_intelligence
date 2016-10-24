@@ -45,13 +45,20 @@ public class KnapSackSolver {
         for (KnapSack fromSack : knapSacks) {
             for (KnapSack toSack : knapSacks) {
                 if (fromSack != toSack) {
-                    Iterator<Item> fromSackItemIter = ((LinkedList<Item>)fromSack.getItems().clone()).iterator();
-                    while (fromSackItemIter.hasNext()) {
-                        Item item = fromSackItemIter.next();
+                    for (Item fromSackItem : fromSack.getItems()){
                         // If the item fits the other sack
-                        ProblemWrapper newNeighbor = addToKnapsack(item, fromSack, toSack, wrapper);
+                        ProblemWrapper newNeighbor = addToKnapsack(fromSackItem, fromSack.copy(), toSack.copy(), wrapper);
                         if (newNeighbor == null) {
-                            //TODO
+                            for (Item toSackItem : toSack.getItems()) {
+                                KnapSack toSackCopy = toSack.copy();
+                                toSackCopy.removeItem(toSackItem);
+                                newNeighbor = addToKnapsack(fromSackItem, fromSack.copy(), toSackCopy, wrapper);
+                                if (newNeighbor != null && newNeighbor.totalValue() > bestNeighbor.totalValue()) {
+                                    bestNeighbor = newNeighbor;
+                                }
+                            }
+                        } else if(newNeighbor.totalValue() > bestNeighbor.totalValue()) {
+                            bestNeighbor = newNeighbor;
                         }
                     }
                 }
