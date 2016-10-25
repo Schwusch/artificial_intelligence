@@ -22,7 +22,7 @@ public class Main {
             ProblemWrapper randomProblemWrapper = startWrapper.copy();
             KnapSackSolver.randomFillKnapsacks(randomProblemWrapper);
             randomProblemWrapper = KnapSackSolver.improvingNeighborSearch(randomProblemWrapper);
-            if (randomProblemWrapper.totalValue() > startWrapper.totalValue()) {
+            if (randomProblemWrapper.totalValue() > bestRandomWrapper.totalValue()) {
                 bestRandomWrapper = randomProblemWrapper;
             }
         }
