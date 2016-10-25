@@ -55,12 +55,12 @@ public class ProblemWrapper {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("------PROBLEM WRAPPER-----\n");
+        sb.append("---------------PROBLEM WRAPPER--------------\n");
         sb.append("Total value: " + totalValue() + "\n\n");
         knapsacks.forEach(sb::append);
         sb.append("Remaining items not placed:\n");
         itemsLeft.forEach(sb::append);
-        sb.append("--------------------------\n");
+        sb.append("--------------------------------------------\n");
         return sb.toString();
     }
 

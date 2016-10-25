@@ -1,15 +1,34 @@
 package com.mah;
 
 public class Main {
+    private static final int RANDOM_START_ITERATIONS = 1000;
+
     public static void main(String[] args) throws Exception {
-        ProblemWrapper greedyProblemWrapper = new ProblemWrapper(Utilities.loadItems(), Utilities.loadKnapsacks());
-        KnapSackSolver.greedyFillKnapsacks(greedyProblemWrapper);
+        ProblemWrapper startingWrapper = new ProblemWrapper(Utilities.loadItems(), Utilities.loadKnapsacks());
+        ProblemWrapper greedyFilledWrapper = startingWrapper.copy();
 
-        System.out.println(greedyProblemWrapper);
+        KnapSackSolver.greedyFillKnapsacks(greedyFilledWrapper);
+        System.out.println("GREEDY FILL:");
+        System.out.println(greedyFilledWrapper);
+        System.out.println("GREEDY START NEIGHBOR SEARCH:");
+        System.out.println(KnapSackSolver.improvingNeighborSearch(greedyFilledWrapper));
+        iterateRandomStarts(startingWrapper);
+    }
 
-        ProblemWrapper neighborProblemWrapper = greedyProblemWrapper.copy();
-        neighborProblemWrapper = KnapSackSolver.improvingNeighborSearch(neighborProblemWrapper);
+    private static void iterateRandomStarts(ProblemWrapper startWrapper){
+        ProblemWrapper bestRandomWrapper = startWrapper;
 
-        System.out.println(neighborProblemWrapper);
+        for (int i = 0; i< RANDOM_START_ITERATIONS; i++) {
+            ProblemWrapper randomProblemWrapper = startWrapper.copy();
+            KnapSackSolver.randomFillKnapsacks(randomProblemWrapper);
+            randomProblemWrapper = KnapSackSolver.improvingNeighborSearch(randomProblemWrapper);
+            if (randomProblemWrapper.totalValue() > startWrapper.totalValue()) {
+                bestRandomWrapper = randomProblemWrapper;
+            }
+        }
+
+        System.out.println("Best solution during " + RANDOM_START_ITERATIONS +
+                " iterations of solving neighborsearch with random start: ");
+        System.out.print(bestRandomWrapper);
     }
 }
