@@ -75,6 +75,12 @@ public class KnapSackSolver {
 
         // Try all permutations of knapsack item moves to find neighbors
         for (KnapSack fromSack : knapSacks) {
+            // Try to simply add a non-included item to a sack
+            ProblemWrapper newNeighborNonIncluded = addNonIncludedToKnapsack(fromSack, originalState);
+            if(newNeighborNonIncluded != null && newNeighborNonIncluded.totalValue() > bestNeighbor.totalValue()) {
+                // We've found a better neighbor!
+                bestNeighbor = newNeighborNonIncluded;
+            }
             for (KnapSack toSack : knapSacks) {
                 if (fromSack != toSack) {
                     for (Item fromSackItem : fromSack.getItems()){
@@ -131,6 +137,25 @@ public class KnapSackSolver {
             }
         }
 
+        return bestNeighbor;
+    }
+
+    private static ProblemWrapper addNonIncludedToKnapsack(KnapSack toSack, ProblemWrapper originalState) {
+        ProblemWrapper bestNeighbor = null;
+        for (Item itemNoSack : originalState.getItemsLeft()) {
+            KnapSack toSackCopy = toSack.copy();
+            if(toSackCopy.addItem(itemNoSack)) {
+                ProblemWrapper newNeighbor = originalState.copy();
+                newNeighbor.getKnapsacks().remove(newNeighbor.getKnapsackById(toSackCopy.id));
+                newNeighbor.getKnapsacks().add(toSackCopy);
+                newNeighbor.getItemsLeft().remove(itemNoSack);
+
+                if (bestNeighbor == null || newNeighbor.totalValue() > bestNeighbor.totalValue()) {
+                    // We've found a local best neighbor!
+                    bestNeighbor = newNeighbor;
+                }
+            }
+        }
         return bestNeighbor;
     }
 }
