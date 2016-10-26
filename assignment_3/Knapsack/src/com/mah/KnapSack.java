@@ -100,10 +100,11 @@ public class KnapSack {
         return new KnapSack((LinkedList<Item>)items.clone(), constraint, totalWeight, totalValue, id);
     }
 
-    @Override
+    
     /**
      * Builds a string that shows information about a knapsack object.
      */
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("KNAPSACK:\n");
