@@ -85,13 +85,13 @@ public class KnapSackSolver {
                 if (fromSack != toSack) {
                     for (Item fromSackItem : fromSack.getItems()){
                         // Try to put an item from one sack into another
-                        ProblemWrapper newNeighbor = addToKnapsack(fromSackItem, fromSack.copy(), toSack.copy(), originalState);
+                        ProblemWrapper newNeighbor = addToKnapsack(fromSackItem, fromSack, toSack, originalState);
                         if (newNeighbor == null) {
                             // If it doesn't fit, try to remove one item then try again
                             for (Item toSackItem : toSack.getItems()) {
                                 KnapSack toSackCopy = toSack.copy();
                                 toSackCopy.removeItem(toSackItem);
-                                newNeighbor = addToKnapsack(fromSackItem, fromSack.copy(), toSackCopy, originalState);
+                                newNeighbor = addToKnapsack(fromSackItem, fromSack, toSackCopy, originalState);
                                 if (newNeighbor != null && newNeighbor.totalValue() > bestNeighbor.totalValue()) {
                                     // We've found a better neighbor!
                                     bestNeighbor = newNeighbor;
@@ -115,18 +115,21 @@ public class KnapSackSolver {
      */
     private static ProblemWrapper addToKnapsack(Item item, KnapSack fromSack, KnapSack toSack, ProblemWrapper originalState) {
         ProblemWrapper bestNeighbor = null;
-        if (toSack.addItem(item)) {
+        KnapSack toSackCopy = toSack.copy();
+        if (toSackCopy.addItem(item)) {
             // If adding item to other sack was successful, remove it from the first sack
-            fromSack.removeItem(item);
+            KnapSack fromSackCopy = fromSack.copy();
+            fromSackCopy.removeItem(item);
             // Try adding a non-included item to the first sack
             for (Item itemNoSack : originalState.getItemsLeft()) {
-                if(fromSack.addItem(itemNoSack)) {
+                KnapSack fromSackCopyCopy = fromSackCopy.copy();
+                if(fromSackCopyCopy.addItem(itemNoSack)) {
                     // If adding an item to the first sack was successful, save the state as a wrapper
                     ProblemWrapper newNeighbor = originalState.copy();
-                    newNeighbor.getKnapsacks().remove(newNeighbor.getKnapsackById(fromSack.id));
-                    newNeighbor.getKnapsacks().add(fromSack);
-                    newNeighbor.getKnapsacks().remove(newNeighbor.getKnapsackById(toSack.id));
-                    newNeighbor.getKnapsacks().add(toSack);
+                    newNeighbor.getKnapsacks().remove(newNeighbor.getKnapsackById(fromSackCopyCopy.id));
+                    newNeighbor.getKnapsacks().add(fromSackCopyCopy);
+                    newNeighbor.getKnapsacks().remove(newNeighbor.getKnapsackById(toSackCopy.id));
+                    newNeighbor.getKnapsacks().add(toSackCopy);
                     newNeighbor.getItemsLeft().remove(itemNoSack);
                     
                     if (bestNeighbor == null || newNeighbor.totalValue() > bestNeighbor.totalValue()) {
