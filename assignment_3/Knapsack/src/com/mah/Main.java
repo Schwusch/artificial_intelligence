@@ -1,7 +1,11 @@
 package com.mah;
 
 import java.util.LinkedList;
-
+/**
+ * This class runs the different algorithms to solve a multiple knapsack problem. 
+ * @author Olle Casperson and Jonathan Böcker
+ *
+ */
 public class Main {
     private static final int RANDOM_START_ITERATIONS = 100;
 
@@ -22,7 +26,12 @@ public class Main {
 
         iterateRandomStarts(startingWrapper);
     }
-
+    
+    /**
+     * Finds the best solution to a knapsack problem by running the improved neighbor search 100 times.
+     * @param startWrapper A wrapper with knapsacks filled with the randomFillKnapsacks method.
+     * @throws Exception
+     */
     private static void iterateRandomStarts(ProblemWrapper startWrapper) throws Exception {
         ProblemWrapper bestRandomWrapper = startWrapper;
 
@@ -38,7 +47,12 @@ public class Main {
         System.out.print(bestRandomWrapper);
         validateSolution(bestRandomWrapper);
     }
-
+    
+    /**
+     * Validates the solution by checking if an item exists multiple times in the different knapsacks.
+     * @param solution Wrapper containing the solution to a knapsack problem.
+     * @throws Exception
+     */
     private static void validateSolution(ProblemWrapper solution) throws Exception {
         LinkedList<Item> allItems = solution.getAllItems();
         boolean anyDuplicateItem = false;

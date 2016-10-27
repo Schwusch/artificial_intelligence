@@ -142,7 +142,7 @@ public class KnapSackSolver {
 
         return bestNeighbor;
     }
-
+    
     private static ProblemWrapper addNonIncludedToKnapsack(KnapSack toSack, ProblemWrapper originalState) {
         ProblemWrapper bestNeighbor = originalState;
         for (Item itemNoSack : originalState.getItemsLeft()) {
